@@ -1,4 +1,6 @@
-from ApiDir import db
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy() # app.py에서 sqlalchemy 호출시 순환 호출 오류 발생하여 각 api마다 호출
 
 class User(db.Model):
     ID = db.Column(db.String(10), primary_key=True)

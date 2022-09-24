@@ -1,7 +1,9 @@
 from flask import request
 from flask_restx import Resource, Api, Namespace
-from ApiDir import db
 import models
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy() # app.py에서 sqlalchemy 호출시 순환 호출 오류 발생하여 각 api마다 호출
 
 User = Namespace('User')
 

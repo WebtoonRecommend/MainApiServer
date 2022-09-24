@@ -3,6 +3,9 @@ from ApiDir.WorldCup import WorldCup
 from flask_restx import Resource, Api
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy() 
 
 import config
 
@@ -21,7 +24,8 @@ migrate.init_app(app, db)
 import models
 
 # api 등록
-from ApiDir.UserApi import User, WorldCup
+from ApiDir.UserApi import User
+from ApiDir.WorldCup import WorldCup
 api.add_namespace(User, '/User')
 api.add_namespace(WorldCup, '/WorldCup')
 
