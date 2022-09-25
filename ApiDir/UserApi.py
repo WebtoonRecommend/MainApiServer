@@ -11,8 +11,8 @@ User = Namespace('User')
 class UserAdd(Resource): # user 회원가입
     def post(self):
         # 데이터 파싱
-        ID = str(request.json.get('ID'))
-        PassWd = str(request.json.get('PassWd'))
+        ID = request.json.get('ID')
+        PassWd = request.json.get('PassWd')
         Age = int(request.json.get('Age'))
         Job = int(request.json.get('Job'))
         Sex = int(request.json.get('Sex'))
