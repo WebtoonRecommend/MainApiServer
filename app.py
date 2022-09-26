@@ -1,4 +1,5 @@
 from flask import Flask
+from ApiDir.WebToon import WebToon
 from ApiDir.WorldCup import WorldCup
 from flask_restx import Resource, Api
 from flask_sqlalchemy import SQLAlchemy
@@ -26,8 +27,10 @@ import models
 # api 등록
 from ApiDir.UserApi import User
 from ApiDir.WorldCup import WorldCup
+from ApiDir.WebToon import WebToon
 api.add_namespace(User, '/User')
 api.add_namespace(WorldCup, '/WorldCup')
+api.add_namespace(WebToon, '/WebToon')
 
 
 
