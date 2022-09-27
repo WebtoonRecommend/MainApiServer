@@ -5,11 +5,12 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy() # app.py에서 sqlalchemy 호출시 순환 호출 오류 발생하여 각 api마다 호출
 
-User = Namespace('User', description='User DB와 통신하는 Api')
+User = Namespace('User', description='User DB(User의 정보를 저장하는 DB)와 통신하는 Api')
 
 @User.route('')
 class UserAdd(Resource): # user 회원가입
     def post(self):
+        '''User의 정보를 저장하는 API\nId, 비밀번호, 나이, 직업, 성별을 json의 형태로 전달받아 DB에 저장한다.'''
         # 데이터 파싱
         ID = request.json.get('ID')
         PassWd = request.json.get('PassWd')
@@ -30,7 +31,7 @@ class UserAdd(Resource): # user 회원가입
 @User.route('/<UID>')
 class UserEdit(Resource):
     def get(self, UID):
-        UserId = str(UID)
+        ''''''
         data = db.session.query(models.User).filter(models.User.ID.like(UID)).first()
 
         return {

@@ -10,7 +10,7 @@ import json
 
 db = SQLAlchemy() # app.py에서 sqlalchemy 호출시 순환 호출 오류 발생하여 각 api마다 호출
 
-WebToon = Namespace('WebToon')
+WebToon = Namespace('WebToon', description='WebToon DB(웹툰의 정보를 저장하는 DB)와 통신하는 Api')
 
 @WebToon.route('')
 class WebToonAdd(Resource):
