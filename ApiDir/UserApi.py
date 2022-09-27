@@ -31,7 +31,7 @@ class UserAdd(Resource): # user 회원가입
 @User.route('/<UID>')
 class UserEdit(Resource):
     def get(self, UID):
-        ''''''
+        '''User의 정보를 가져오는 API\nID를 입력받아 해당 ID와 동일한 User의 성별, 직업, 나이를 반환한다.'''
         data = db.session.query(models.User).filter(models.User.ID.like(UID)).first()
 
         return {

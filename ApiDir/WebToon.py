@@ -15,6 +15,7 @@ WebToon = Namespace('WebToon', description='WebToon DB(웹툰의 정보를 저�
 @WebToon.route('')
 class WebToonAdd(Resource):
     def post(self):
+        '''Webtoon의 정보를 추가하는 API\n이미지파일, 제목, 요약, 작가를 입력받아 DB에 저장한다.'''
         file = Image.open(request.files['file']) # 파일 열기
         Author = request.form['Author']        
         Title = request.form['Title']
@@ -32,6 +33,7 @@ class WebToonAdd(Resource):
 @WebToon.route('/<Title>')
 class GetWebToonInfo(Resource):
     def get(self, Title):
+        '''웹툰의 정보를 가져오는 API\n입력받은 제목과 동일한 웹툰의 정로를 반환한다.'''
         data = models.WebToon.query.filter(models.WebToon.Title.like(Title)).first()
         
         return {
