@@ -4,7 +4,9 @@ import models
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 from PIL import Image # 이미지를 다루는 라이브러리
+import pandas as pd
 import os
+import json
 
 db = SQLAlchemy() # app.py에서 sqlalchemy 호출시 순환 호출 오류 발생하여 각 api마다 호출
 
@@ -26,3 +28,15 @@ class WebToonAdd(Resource):
         db.session.flush()
 
         return 0
+
+@WebToon.route('/<Title>')
+class GetWebToonInfo(Resource):
+    def get(self, Title):
+        data = models.WebToon.query.filter(models.WebToon.Title.like(Title)).first()
+        
+        return {
+            'Title':data.Title,
+            'Author':data.Author,
+            'Summary':data.Summary,
+            'ThumbNail':data.ThumbNail
+        } 
