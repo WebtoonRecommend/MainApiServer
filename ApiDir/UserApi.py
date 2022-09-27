@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy() # app.py에서 sqlalchemy 호출시 순환 호출 오류 발생하여 각 api마다 호출
 
-User = Namespace('User')
+User = Namespace('User', description='User DB와 통신하는 Api')
 
 @User.route('')
 class UserAdd(Resource): # user 회원가입
