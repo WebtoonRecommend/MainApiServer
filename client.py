@@ -2,7 +2,7 @@
 
 import requests
 
-img = open('DSC05282.JPG', 'rb') #전송할 사진을 MainApiServer 에 넣고 사용
+img = open('horse.png', 'rb') #전송할 사진을 MainApiServer 에 넣고 사용
 
 files = {
     'file': img

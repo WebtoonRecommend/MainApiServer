@@ -22,3 +22,7 @@ class WorldCup(db.Model):
     UID = db.Column(db.String(10))
     WebtoonTitle = db.Column(db.String(10))
 
+class BookMark(db.Model):
+    ID = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    UID = db.Column(db.String(10))
+    WebtoonTitle = db.Column(db.String(10))
