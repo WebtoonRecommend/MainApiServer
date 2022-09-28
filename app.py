@@ -1,4 +1,7 @@
+from re import T
+from tkinter.tix import Tree
 from flask import Flask
+from ApiDir.BookMark import BookMark
 from ApiDir.WebToon import WebToon
 from ApiDir.WorldCup import WorldCup
 from flask_restx import Resource, Api
@@ -28,10 +31,11 @@ import models
 from ApiDir.UserApi import User
 from ApiDir.WorldCup import WorldCup
 from ApiDir.WebToon import WebToon
+from ApiDir.BookMark import BookMark
 api.add_namespace(User, '/User')
 api.add_namespace(WorldCup, '/WorldCup')
 api.add_namespace(WebToon, '/WebToon')
-
+api.add_namespace(BookMark, '/BookMark')
 
 
 if __name__ == '__main__':

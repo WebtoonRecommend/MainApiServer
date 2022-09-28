@@ -14,4 +14,4 @@ data = {
     "Summary" : "00000000000",
 }
 
-res = requests.post(' http://3.39.22.234:80/WebToon', files=files, data=data)
+res = requests.post('https://127.0.0.1:5000/WebToon', files=files, data=data)
