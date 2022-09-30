@@ -32,7 +32,6 @@ class BookMarkAdd(Resource):
 class BookMarkList(Resource):
     '''User가 즐겨찾기에 등록한 모든 웹툰들을 쿼리하여 가져오는 api'''
     def get(self, UID):
-        data = models.BookMark.query.filter(models.BookMark.UID.like(UID))
-        data = pd.read_sql(data)
-
+        data = db.session.query(models.BookMark).filter(models.BookMark.UID==UID)
+        data = pd.read_sql(data.statement, data.session.bind)
         return json.loads(data.to_json(orient='records'))
