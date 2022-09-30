@@ -35,3 +35,12 @@ class BookMarkList(Resource):
         data = db.session.query(models.BookMark).filter(models.BookMark.UID==UID)
         data = pd.read_sql(data.statement, data.session.bind)
         return json.loads(data.to_json(orient='records'))
+
+@BookMark.route('/<UID>/<WebToonTitle>')
+class BookMarkDelete(Resource):
+    '''User가 즐겨찾기에 등록한 웹툰 삭제'''
+    def delete(self, UID, WebToonTitle):
+    
+        webtoon = db.session.query(models.BookMark).filter(models.BookMark.UID==UID, models.BookMark.WebtoonTitle==WebToonTitle).delete()
+        db.session.commit()
+        return 0
