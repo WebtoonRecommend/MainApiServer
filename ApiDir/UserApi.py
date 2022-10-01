@@ -8,8 +8,10 @@ db = SQLAlchemy() # app.py에서 sqlalchemy 호출시 순환 호출 오류 발�
 
 User = Namespace('User', description='User DB(User의 정보를 저장하는 DB)와 통신하는 Api')
 
-@User.route('')
+@User.route('', doc={'params':{'ID':'User가 입력한 ID(10자 이내)', 'PassWd':'User가 입력한 PassWd(10자 이내)',\
+     'Age':'User의 나이(숫자가 아닌 문자열)','Job':'유저의 직업(분류별로 int형태로 나타내지만 문자열)', 'Sex':'0 혹은 1로 나타내지만 문자열'}}) # 입력 parameter swagger 추가
 class UserAdd(Resource): # user 회원가입
+    
     def post(self):
         '''User의 정보를 저장하는 API\nId, 비밀번호, 나이, 직업, 성별을 json의 형태로 전달받아 DB에 저장한다.'''
         # 데이터 파싱
@@ -41,10 +43,12 @@ class UserEdit(Resource):
             'Sex': data.Sex
         }
     
+    @User.doc(params={'PassWd':'로그인할 유저가 입력한 비밀번호'})
     def post(self, UID):
         '''User 로그인 API\n로그인 정보를 받아 옳을 경우 0 아닐경우 1을 반환한다. id가 존재하지 않는 경우는 2를 반환한다.'''
         ID = UID
         PW = request.json.get('PassWd')
+        
 
         data = db.session.query(models.User).filter(models.User.ID.like(ID)).first()
         
