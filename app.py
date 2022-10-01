@@ -1,4 +1,3 @@
-from re import T
 from flask import Flask
 from ApiDir.BookMark import BookMark
 from ApiDir.WebToon import WebToon
@@ -31,11 +30,13 @@ from ApiDir.UserApi import User
 from ApiDir.WorldCup import WorldCup
 from ApiDir.WebToon import WebToon
 from ApiDir.BookMark import BookMark
+from ApiDir.Recommended import Recommended
 api.add_namespace(User, '/User')
 api.add_namespace(WorldCup, '/WorldCup')
 api.add_namespace(WebToon, '/WebToon')
 api.add_namespace(BookMark, '/BookMark')
+api.add_namespace(Recommended, '/Recommended')
 
 
 if __name__ == '__main__':
-    app.run(debug=True)#host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0', debug=True)

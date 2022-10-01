@@ -1,4 +1,3 @@
-from operator import mod
 from flask import request
 from flask_restx import Resource, Api, Namespace
 import models
