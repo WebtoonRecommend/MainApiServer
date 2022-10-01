@@ -1,3 +1,4 @@
+from operator import mod
 from flask import request
 from flask_restx import Resource, Api, Namespace
 import models
@@ -39,3 +40,18 @@ class UserEdit(Resource):
             'Job': data.Job,
             'Sex': data.Sex
         }
+    
+    def post(self, UID):
+        '''User 로그인 API\n로그인 정보를 받아 옳을 경우 0 아닐경우 1을 반환한다. id가 존재하지 않는 경우는 2를 반환한다.'''
+        ID = UID
+        PW = request.json.get('PassWd')
+
+        data = db.session.query(models.User).filter(models.User.ID.like(ID)).first()
+        
+        try:
+            if data.PassWd == PW:
+                return 0
+            else:
+                return 1
+        except:
+            return 2
