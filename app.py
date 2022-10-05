@@ -5,7 +5,6 @@ from ApiDir.WebToon import WebToon
 from ApiDir.WorldCup import WorldCup
 from flask_restx import Resource, Api
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy() 
