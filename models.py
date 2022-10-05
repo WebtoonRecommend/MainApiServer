@@ -4,7 +4,7 @@ db = SQLAlchemy() # app.py에서 sqlalchemy 호출시 순환 호출 오류 발�
 
 class User(db.Model):
     ID = db.Column(db.String(10), primary_key=True)
-    PassWd = db.Column(db.String(10))
+    PassWd = db.Column(db.String(100))
     Age = db.Column(db.Integer)
     Job = db.Column(db.Integer) # 직업의 유형별로 분류하여 숫자로 인코딩 할 예정
     Sex = db.Column(db.Integer)
@@ -31,3 +31,8 @@ class RecommendedList(db.Model):
     ID = db.Column(db.Integer, autoincrement=True, primary_key=True)
     UID = db.Column(db.String(10))
     WebtoonTitle = db.Column(db.String(10))
+
+class KeyWords(db.Model):
+    ID = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    UID = db.Column(db.String(10))
+    Word = db.Column(db.String(10))

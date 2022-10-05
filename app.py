@@ -31,12 +31,13 @@ from ApiDir.WorldCup import WorldCup
 from ApiDir.WebToon import WebToon
 from ApiDir.BookMark import BookMark
 from ApiDir.Recommended import Recommended
+from ApiDir.KeyWords import KeyWords
 api.add_namespace(User, '/User')
 api.add_namespace(WorldCup, '/WorldCup')
 api.add_namespace(WebToon, '/WebToon')
 api.add_namespace(BookMark, '/BookMark')
 api.add_namespace(Recommended, '/Recommended')
-
+api.add_namespace(KeyWords, '/KeyWords')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
