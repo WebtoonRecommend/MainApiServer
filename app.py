@@ -17,12 +17,12 @@ api = Api(app, title='DB Server Api', description='데이터베이스와 통신�
 
 #orm
 db = SQLAlchemy()
-migrate = Migrate(app, db) 
+
 
 # 데이터베이스 초기화
 app.config.from_object(config)
 db.init_app(app)
-migrate.init_app(app, db)
+
 import models
 
 # api 등록
