@@ -69,7 +69,7 @@ data_list = [
 ]
 
 for i in range(3):
-    res = requests.post('http://3.39.22.234/WebToon', files=files[i], data=data_list[i], verify=False)
+    res = requests.post('http://127.0.0.1:5000/WebToon', files=files[i], data=data_list[i], verify=False)
     sleep(1)
     print(i)
     print(data_list[i], files[i])

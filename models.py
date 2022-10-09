@@ -14,7 +14,7 @@ class WebToon(db.Model):
     Author = db.Column(db.String(10))
     Title = db.Column(db.String(10), nullable=False)
     Summary = db.Column(db.String(100))
-    ThumbNail = db.Column(db.String(20))
+    ThumbNail = db.Column(db.String(100))
 
 class WorldCup(db.Model):
     ID = db.Column(db.Integer, autoincrement=True, primary_key=True)

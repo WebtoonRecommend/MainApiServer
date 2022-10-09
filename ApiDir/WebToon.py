@@ -13,16 +13,16 @@ WebToon = Namespace('WebToon', description='WebToon DB(웹툰의 정보를 저�
 
 @WebToon.route('')
 class WebToonAdd(Resource):
-    @WebToon.doc(params={'file':'이미지 파일, 웹툰의 썸네일을 의미', 'Author':'웹툰의 저자', 'Title':'WebToon의 제목',\
+    @WebToon.doc(params={'ThumbNail':'썸네일이 저장된 링크', 'Author':'웹툰의 저자', 'Title':'WebToon의 제목',\
         'Summary':'웹툰의 내용 요약(100자 이내)'})
     def post(self):
-        '''Webtoon의 정보를 추가하는 API\n이미지파일, 제목, 요약, 작가를 입력받아 DB에 저장한다.'''
-        file = Image.open(request.files['file']) # 파일 열기
-        Author = request.form['Author']        
-        Title = request.form['Title']
-        Summary = request.form['Summary']
-        file.save('{}/ApiDir/pictures/'.format(os.getcwd()) + secure_filename(request.files['file'].filename)) # 절대경로로 위치를 지정하여야 저장이 가능함
-        ThumbNail = str('{}/ApiDir/pictures/'.format(os.getcwd()) + secure_filename(request.files['file'].filename))
+        '''Webtoon의 정보를 추가하는 API\n이미지 링크, 제목, 요약, 작가를 입력받아 DB에 저장한다.'''
+        #file = Image.open(request.files['file']) # 파일 열기
+        Author = request.json.get('Author')        
+        Title = request.json.get('Title')
+        Summary = request.json.get('Summary')
+        #file.save('{}/ApiDir/pictures/'.format(os.getcwd()) + secure_filename(request.files['file'].filename)) # 절대경로로 위치를 지정하여야 저장이 가능함
+        ThumbNail = request.json.get('ThumbNail')#str('{}/ApiDir/pictures/'.format(os.getcwd()) + secure_filename(request.files['file'].filename))
         
         data = models.WebToon(Author=Author, Title=Title, Summary=Summary, ThumbNail=ThumbNail)
         db.session.add(data)

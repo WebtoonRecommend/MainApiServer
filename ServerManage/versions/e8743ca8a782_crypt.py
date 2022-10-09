@@ -22,7 +22,7 @@ def upgrade():
     op.drop_column('book_mark', 'UID')
     op.add_column('book_mark', sa.Column('UID', sa.String(100)))
     op.drop_column('recommended_list', 'UID')
-    op.add_column('recommended_', sa.Column('UID', sa.String(100)))
+    op.add_column('recommended_list', sa.Column('UID', sa.String(100)))
     op.drop_table('user')
     op.create_table(
         'user',
