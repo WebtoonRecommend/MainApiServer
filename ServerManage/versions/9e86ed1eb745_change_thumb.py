@@ -1,8 +1,8 @@
-"""correcttable
+"""change_thumb
 
-Revision ID: 1eba6cdcb1d8
-Revises: f165fbedf0d2
-Create Date: 2022-10-09 19:18:26.760753
+Revision ID: 9e86ed1eb745
+Revises: 1eba6cdcb1d8
+Create Date: 2022-10-12 09:52:49.717074
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '1eba6cdcb1d8'
-down_revision = 'f165fbedf0d2'
+revision = '9e86ed1eb745'
+down_revision = '1eba6cdcb1d8'
 branch_labels = None
 depends_on = None
 

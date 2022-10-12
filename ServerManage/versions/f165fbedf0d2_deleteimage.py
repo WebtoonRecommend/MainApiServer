@@ -17,7 +17,7 @@ depends_on = None
 
 
 def upgrade():
-    op.drop_column('web_toon', 'UID')
+    op.drop_column('web_toon', 'ThumbNail')
     op.add_column('web_toon', sa.Column('ThumbNail', sa.String(100)))
 
 

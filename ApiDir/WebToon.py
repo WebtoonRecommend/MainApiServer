@@ -32,9 +32,9 @@ class WebToonAdd(Resource):
         return 0
 
 @WebToon.route('/<Title>')
-class GetWebToonInfo(Resource):
+class WebToonInfo(Resource):
     def get(self, Title):
-        '''웹툰의 정보를 가져오는 API\n입력받은 제목과 동일한 웹툰의 정로를 반환한다.'''
+        '''웹툰의 정보를 가져오는 API\n입력받은 제목과 동일한 웹툰의 정보를 반환한다.'''
         data = models.WebToon.query.filter(models.WebToon.Title.like(Title)).first()
         
         return {
@@ -43,3 +43,12 @@ class GetWebToonInfo(Resource):
             'Summary':data.Summary,
             'ThumbNail':data.ThumbNail
         } 
+    
+    def delete(self, Title):
+        '''웹툰의 제목을 입력받아 해당하는 웹툰을 삭제하는 API'''
+        try:
+            db.session.query(models.WebToon).filter(models.WebToon.Title==Title).delete()
+            db.session.commit()
+            return 0 # 쿼리 성공 시
+        except:
+            return 1 # 쿼리 실패 시

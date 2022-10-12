@@ -29,3 +29,14 @@ class KeyWordGet(Resource):
         data = db.session.query(models.KeyWords).filter(models.KeyWords.UID==UID)
         data = pd.read_sql(data.statement, data.session.bind)
         return json.loads(data.to_json(orient='records'))
+
+@KeyWords.route('/<UID>/<Word>')
+class KeyWordDelete(Resource):
+    def delete(self, UID, Word):
+        '''유저의 ID와 삭제할 키워드를 입력받아 해당하는 row를 삭제하는 API'''
+        try:
+            db.session.query(models.KeyWords).filter(models.KeyWords.UID==UID, models.KeyWords.Word==Word).delete()
+            db.session.commit()
+            return 0 # 쿼리 성공 시
+        except:
+            return 1 # 쿼리 실패 시

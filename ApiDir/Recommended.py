@@ -1,3 +1,4 @@
+from ast import Delete
 from operator import mod
 from flask import request
 from flask_restx import Resource, Api, Namespace
@@ -33,3 +34,27 @@ class RecommendedGet(Resource):
         data = db.session.query(models.RecommendedList).filter(models.RecommendedList.UID==UID)
         data = pd.read_sql(data.statement, data.session.bind)
         return json.loads(data.to_json(orient='records'))
+
+    # def delete(self, UID, methods=['DELETE']):
+    #     '''UID를 입력받아 UID가 일치하는 모든 추천 웹툰들을 삭제하는 API'''
+
+    #     try:
+    #         delete_list = db.session.query(models.RecommendedList).filter(models.RecommendedList.UID==UID).all()
+    #         for i in delete_list:
+    #             db.session.delete(i)
+    #         db.session.commit()
+    #         return 0 # 쿼리 성공 시
+    #     except:
+    #         return 1 # 쿼리 실패 시
+
+@Recommended.route('/<UID>/<Title>')
+class RecommendedDelete(Resource):
+    def delete(self, UID, Title):
+        '''User의 추천 목록 리스트에서 제목과 UID가 일치하는 웹툰을 삭제하는 API'''
+
+        try:
+            db.session.query(models.RecommendedList).filter(models.RecommendedList.UID==UID, models.RecommendedList.WebtoonTitle==Title).delete()
+            db.session.commit()
+            return 0 # 쿼리 성공 시
+        except:
+            return 1 # 쿼리 실패 시
