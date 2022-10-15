@@ -36,3 +36,19 @@ class KeyWords(db.Model):
     ID = db.Column(db.Integer, autoincrement=True, primary_key=True)
     UID = db.Column(db.String(10))
     Word = db.Column(db.String(10))
+
+class webtoonInfoJoin(db.Model):
+    __bind_key__ = 'test'
+    웹툰ID = db.Column(db.Text, primary_key=True)
+    이름 = db.Column(db.Text)
+    작가 = db.Column(db.Text)
+    설명 = db.Column(db.Text)
+    장르 = db.Column(db.Text)
+    이용가 = db.Column(db.Text)
+    회차 = db.Column(db.Text)
+    별점 = db.Column(db.Text)
+    완결 = db.Column(db.Text)
+    플랫폼 = db.Column(db.Text)
+    링크 = db.Column(db.Text)
+    이미지링크 = db.Column(db.Text)
+    썸네일 = db.Column(db.Text)

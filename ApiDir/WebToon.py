@@ -2,10 +2,9 @@ from flask import request
 from flask_restx import Resource, Api, Namespace
 import models
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.utils import secure_filename
-from PIL import Image # 이미지를 다루는 라이브러리
+#from PIL import Image # 이미지를 다루는 라이브러리
 import pandas as pd
-import os
+import json
 
 db = SQLAlchemy() # app.py에서 sqlalchemy 호출시 순환 호출 오류 발생하여 각 api마다 호출
 
@@ -35,20 +34,37 @@ class WebToonAdd(Resource):
 class WebToonInfo(Resource):
     def get(self, Title):
         '''웹툰의 정보를 가져오는 API\n입력받은 제목과 동일한 웹툰의 정보를 반환한다.'''
-        data = models.WebToon.query.filter(models.WebToon.Title.like(Title)).first()
+        data = models.webtoonInfoJoin.query.filter(models.webtoonInfoJoin.이름.like(Title)).first()
         
         return {
-            'Title':data.Title,
-            'Author':data.Author,
-            'Summary':data.Summary,
-            'ThumbNail':data.ThumbNail
-        } 
+            '이름':data.이름,
+            '작가':data.작가,
+            '설명':data.설명,
+            '장르':data.장르,
+            '이용가':data.이용가,
+            '회차':data.회차,
+            '완결':data.완결,
+            '플랫폼':data.플랫폼,
+            '링크':data.링크,
+            '이미지링크':data.이미지링크,
+            '별점':data.별점,
+            '썸네일':data.썸네일,
+        }         
     
     def delete(self, Title):
         '''웹툰의 제목을 입력받아 해당하는 웹툰을 삭제하는 API'''
         try:
-            db.session.query(models.WebToon).filter(models.WebToon.Title==Title).delete()
+            db.session.query(models.webtoonInfoJoin).filter(models.webtoonInfoJoin.이름==Title).delete()
             db.session.commit()
             return 0 # 쿼리 성공 시
         except:
             return 1 # 쿼리 실패 시
+
+@WebToon.route('/Search/<Title>')
+class SearchWebToon(Resource):
+    def get(self, Title):
+        '''웹툰의 정보를 검색하는 api'''
+        import sqlite3
+        con = sqlite3.connect('./test.db')
+        data = pd.read_sql("SELECT * FROM webtoon_info_join WHERE 이름 like '%{}%'".format(Title), con)
+        return json.loads(data.to_json(orient='records'))
