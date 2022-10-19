@@ -11,6 +11,7 @@ User = Namespace('User', description='User DB(User의 정보를 저장하는 DB)
 
 @User.route('', doc={'params':{'ID':'User가 입력한 ID(10자 이내)', 'PassWd':'User가 입력한 PassWd(10자 이내)',\
      'Age':'User의 나이(숫자가 아닌 문자열)','Job':'유저의 직업(분류별로 int형태로 나타내지만 문자열)', 'Sex':'0 혹은 1로 나타내지만 문자열'}}) # 입력 parameter swagger 추가
+@cross_origin(supports_credentials=True)     
 class UserAdd(Resource): # user 회원가입
     
     def post(self):
