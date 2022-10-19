@@ -3,6 +3,7 @@ from flask_restx import Resource, Api, Namespace
 import models
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import bcrypt # 로그인 비밀번호 암호화를 위한 라이브러리
+from flask_cors import CORS, cross_origin
 
 db = SQLAlchemy() # app.py에서 sqlalchemy 호출시 순환 호출 오류 발생하여 각 api마다 호출
 
@@ -44,6 +45,7 @@ class UserEdit(Resource):
         }
     
     @User.doc(params={'PassWd':'로그인할 유저가 입력한 비밀번호'})
+    @cross_origin(supports_credentials=True)
     def post(self, UID):
         '''User 로그인 API\n로그인 정보를 받아 옳을 경우 0 아닐경우 1을 반환한다. id가 존재하지 않는 경우는 2를 반환한다.'''
 
