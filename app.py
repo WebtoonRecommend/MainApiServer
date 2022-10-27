@@ -11,7 +11,7 @@ from flask_cors import CORS
 import config
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r'*':{'origins':'*'}})
 api = Api(app, title='DB Server Api', description='데이터베이스와 통신하기 위한 서버입니다.\n User, WorldCup, WebToob DB가 존재합니다.')
 
 
