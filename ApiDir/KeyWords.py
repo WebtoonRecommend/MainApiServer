@@ -4,6 +4,7 @@ import models
 from flask_sqlalchemy import SQLAlchemy
 import pandas as pd
 import json
+from flask_jwt_extended import *
 
 db = SQLAlchemy()
 
@@ -11,6 +12,7 @@ KeyWords = Namespace('KeyWords', description='KeyWords DB(User가 선호하는 �
 
 @KeyWords.route('', doc={'params':{'UID':'User ID', 'Word':'User가 선택한 키워드'}})
 class KeyWordAdd(Resource):
+    @jwt_required() #jwt 검증
     def post(self):
         '''유저가 회원가입 시 선택한 키워드들을 입력받는 API\n리스트 형태로 전송할 것 ex [{UID:UID, Word:Word}]'''
         data = request.get_json()
@@ -24,6 +26,7 @@ class KeyWordAdd(Resource):
 
 @KeyWords.route('/<UID>')
 class KeyWordGet(Resource):
+    @jwt_required() #jwt 검증
     def get(self, UID):
         '''User가 선택한 키워드들을 리스트 형태로 가져오는 API'''
         data = db.session.query(models.KeyWords).filter(models.KeyWords.UID==UID)
@@ -32,6 +35,7 @@ class KeyWordGet(Resource):
 
 @KeyWords.route('/<UID>/<Word>')
 class KeyWordDelete(Resource):
+    @jwt_required() #jwt 검증
     def delete(self, UID, Word):
         '''유저의 ID와 삭제할 키워드를 입력받아 해당하는 row를 삭제하는 API'''
         try:

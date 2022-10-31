@@ -3,6 +3,8 @@ from flask_restx import Resource, Api, Namespace
 import models
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import bcrypt # 로그인 비밀번호 암호화를 위한 라이브러리
+from flask_jwt_extended import *
+import config
 
 db = SQLAlchemy() # app.py에서 sqlalchemy 호출시 순환 호출 오류 발생하여 각 api마다 호출
 
@@ -20,6 +22,7 @@ class UserAdd(Resource): # user 회원가입
         Age = int(request.json.get('Age'))
         Job = int(request.json.get('Job'))
         Sex = int(request.json.get('Sex'))
+        print(Age, Job, Sex)
 
         try:
             # user에 맞는 형태로 변환 후 session을 열고 저장
@@ -33,8 +36,10 @@ class UserAdd(Resource): # user 회원가입
 
 @User.route('/<UID>')
 class UserEdit(Resource):
+    @jwt_required() #jwt 검증
     def get(self, UID):
-        '''User의 정보를 가져오는 API\nID를 입력받아 해당 ID와 동일한 User의 성별, 직업, 나이를 반환한다.'''
+        '''User의 정보를 가져오는 API\nID를 입력받아 해당 ID와 동일한 User의 성별, 직업, 나이를 반환한다.\
+            jwt 인증의 경우 헤더에 Authorization: Bearer jwt를 입력하여야 한다.'''
         data = db.session.query(models.User).filter(models.User.ID.like(UID)).first()
 
         return {
@@ -55,7 +60,8 @@ class UserEdit(Resource):
             return 2
 
         if PW == True:
-            return 0
+            access_token = create_access_token(identity='WebTune') #jwt 암호화 및 전송
+            return access_token
         else:
            return 1
         

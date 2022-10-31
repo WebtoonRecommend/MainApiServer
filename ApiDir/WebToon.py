@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 #from PIL import Image # 이미지를 다루는 라이브러리
 import pandas as pd
 import json
+from flask_jwt_extended import *
 
 db = SQLAlchemy() # app.py에서 sqlalchemy 호출시 순환 호출 오류 발생하여 각 api마다 호출
 
@@ -14,6 +15,7 @@ WebToon = Namespace('WebToon', description='WebToon DB(웹툰의 정보를 저�
 class WebToonAdd(Resource):
     @WebToon.doc(params={'ThumbNail':'썸네일이 저장된 링크', 'Author':'웹툰의 저자', 'Title':'WebToon의 제목',\
         'Summary':'웹툰의 내용 요약(100자 이내)'})
+    @jwt_required() #jwt 검증
     def post(self):
         '''Webtoon의 정보를 추가하는 API\n이미지 링크, 제목, 요약, 작가를 입력받아 DB에 저장한다.'''
         #file = Image.open(request.files['file']) # 파일 열기
@@ -32,6 +34,7 @@ class WebToonAdd(Resource):
 
 @WebToon.route('/<Title>')
 class WebToonInfo(Resource):
+    @jwt_required() #jwt 검증
     def get(self, Title):
         '''웹툰의 정보를 가져오는 API\n입력받은 제목과 동일한 웹툰의 정보를 반환한다.'''
         data = models.webtoonInfoJoin.query.filter(models.webtoonInfoJoin.이름.like(Title)).first()
@@ -51,6 +54,7 @@ class WebToonInfo(Resource):
             '썸네일':data.썸네일,
         }         
     
+    @jwt_required() #jwt 검증
     def delete(self, Title):
         '''웹툰의 제목을 입력받아 해당하는 웹툰을 삭제하는 API'''
         try:
@@ -62,6 +66,7 @@ class WebToonInfo(Resource):
 
 @WebToon.route('/Search/<Title>')
 class SearchWebToon(Resource):
+    @jwt_required() #jwt 검증
     def get(self, Title):
         '''웹툰의 정보를 검색하는 api'''
         import sqlite3

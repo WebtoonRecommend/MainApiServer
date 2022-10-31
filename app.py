@@ -1,19 +1,21 @@
-from re import T
 from flask import Flask
 from ApiDir.BookMark import BookMark
 from ApiDir.WebToon import WebToon
 from ApiDir.WorldCup import WorldCup
 from flask_restx import Resource, Api
 from flask_sqlalchemy import SQLAlchemy
-from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from flask_jwt_extended import *
 
 import config
 
 app = Flask(__name__)
 CORS(app, resources={r'*':{'origins':'*'}})
-api = Api(app, title='DB Server Api', description='데이터베이스와 통신하기 위한 서버입니다.\n User, WorldCup, WebToob DB가 존재합니다.')
+api = Api(app, title='DB Server Api', description='데이터베이스와 통신하기 위한 서버입니다.\n User, WorldCup, WebToob Table이 존재합니다.')
 
+#auth
+app.config['JWT_SECRET_KEY'] = 'WebTune'
+jwt = JWTManager(app)
 
 #orm
 db = SQLAlchemy()
@@ -40,4 +42,4 @@ api.add_namespace(Recommended, '/Recommended')
 api.add_namespace(KeyWords, '/KeyWords')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0', port=5001, debug=True)
