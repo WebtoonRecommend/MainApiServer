@@ -19,6 +19,9 @@ User_field = User.model('User', {
     'Sex' : fields.String(description='나이, 숫자로 입력')
 })
 
+parser = User.parser() # 헤더를 추가하기 위한 변수
+parser.add_argument('Authorization', location='headers') # 헤더를 입력받기 위해 기대 입력값을 추가
+
 @User.route('') #회원가입의 URL  
 class UserAdd(Resource): # user 회원가입
     @User.expect(User_field) # swagger를 통해 데이터베이스를 조작하도록 등록
@@ -45,8 +48,6 @@ class UserAdd(Resource): # user 회원가입
 
 @User.route('/<UID>')
 class UserEdit(Resource):
-    parser = User.parser() # 헤더를 추가하기 위한 변수
-    parser.add_argument('Authorization', location='headers') # 헤더를 입력받기 위해 기대 입력값을 추가
 
     @jwt_required() #jwt 검증
     @User.expect(parser) # 입력값 추가

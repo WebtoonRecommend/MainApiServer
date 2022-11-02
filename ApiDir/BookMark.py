@@ -16,11 +16,11 @@ BookMark_field = BookMark.model('BookMark', {
     'Title' : fields.String(description='북마크에 저장할 웹툰의 제목')
 })
 
+parser = BookMark.parser() # 헤더를 추가하기 위한 변수
+parser.add_argument('Authorization', location='headers') # 헤더를 입력받기 위해 기대 입력값을 추가
+
 @BookMark.route('')
 class BookMarkAdd(Resource):
-    
-    parser = BookMark.parser() # 헤더를 추가하기 위한 변수
-    parser.add_argument('Authorization', location='headers') # 헤더를 입력받기 위해 기대 입력값을 추가
 
     @jwt_required() #jwt 검증
     @BookMark.expect(parser, BookMark_field)
@@ -45,9 +45,6 @@ class BookMarkAdd(Resource):
 class BookMarkList(Resource):
     '''User가 즐겨찾기에 등록한 모든 웹툰들을 쿼리하여 가져오는 api\n\
         해당 User의 ID와 동일한 UID를 가진 모든 북마크들을 리스트 형태로 받아온다.'''
-
-    parser = BookMark.parser() # 헤더를 추가하기 위한 변수
-    parser.add_argument('Authorization', location='headers') # 헤더를 입력받기 위해 기대 입력값을 추가
     
     @jwt_required() #jwt 검증
     @BookMark.expect(parser)
@@ -60,9 +57,6 @@ class BookMarkList(Resource):
 class BookMarkDelete(Resource):
     '''User가 즐겨찾기에 등록한 웹툰 삭제\n\
         BookMark DB의 값 중에서 UID와 WebToonTitle이 동일한 항목 삭제'''
-
-    parser = BookMark.parser() # 헤더를 추가하기 위한 변수
-    parser.add_argument('Authorization', location='headers') # 헤더를 입력받기 위해 기대 입력값을 추가
 
     @jwt_required() #jwt 검증
     @BookMark.expect(parser)

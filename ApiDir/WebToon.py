@@ -20,6 +20,9 @@ WebToon_field = WebToon.model('WebToon', { # 아직 안함
     'Sex' : fields.String(description='나이, 숫자로 입력')
 })
 
+parser = WebToon.parser() # 헤더를 추가하기 위한 변수
+parser.add_argument('Authorization', location='headers') # 헤더를 입력받기 위해 기대 입력값을 추가
+
 @WebToon.route('')
 class WebToonAdd(Resource):
     @WebToon.doc(params={'ThumbNail':'썸네일이 저장된 링크', 'Author':'웹툰의 저자', 'Title':'WebToon의 제목',\
@@ -43,9 +46,6 @@ class WebToonAdd(Resource):
 
 @WebToon.route('/<Title>')
 class WebToonInfo(Resource):
-
-    parser = WebToon.parser() # 헤더를 추가하기 위한 변수
-    parser.add_argument('Authorization', location='headers') # 헤더를 입력받기 위해 기대 입력값을 추가
 
     @jwt_required() #jwt 검증
     @WebToon.expect(parser)
@@ -80,8 +80,6 @@ class WebToonInfo(Resource):
 
 @WebToon.route('/Search/<Title>')
 class SearchWebToon(Resource):
-    parser = WebToon.parser() # 헤더를 추가하기 위한 변수
-    parser.add_argument('Authorization', location='headers') # 헤더를 입력받기 위해 기대 입력값을 추가
 
     @jwt_required() #jwt 검증
     @WebToon.expect(parser)
