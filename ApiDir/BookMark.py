@@ -1,5 +1,5 @@
 from flask import request
-from flask_restx import Resource, Api, Namespace
+from flask_restx import Resource, Api, Namespace, fields
 import models
 from flask_sqlalchemy import SQLAlchemy
 import pandas as pd
@@ -10,10 +10,21 @@ db = SQLAlchemy() # app.py에서 sqlalchemy 호출시 순환 호출 오류 발�
 
 BookMark = Namespace('BookMark', description='BookMark DB(User가 선호하는 웹툰를 저장하는 DB)와 통신하는 Api')
 
+#swagger 문서화를 위한 모델 정의
+BookMark_field = BookMark.model('BookMark', {
+    'UID' : fields.String(description='사용자 ID'),
+    'Title' : fields.String(description='북마크에 저장할 웹툰의 제목')
+})
+
 @BookMark.route('')
 class BookMarkAdd(Resource):
-    @BookMark.doc(params={'UID':'해당 북마크를 저장하는 User의 ID', 'Title':'북마크에 저장될 웹툰의 제목'})
+    
+    parser = BookMark.parser() # 헤더를 추가하기 위한 변수
+    parser.add_argument('Authorization', location='headers') # 헤더를 입력받기 위해 기대 입력값을 추가
+
     @jwt_required() #jwt 검증
+    @BookMark.expect(parser, BookMark_field)
+    @BookMark.expect(BookMark_field)
     def post(self):
         '''User가 선호하는 웹툰를 저장하는 API\nUser ID와 웹툰 제목을 json의 형태로 전달받아 DB에 저장한다.'''
         # 데이터 파싱
@@ -34,7 +45,12 @@ class BookMarkAdd(Resource):
 class BookMarkList(Resource):
     '''User가 즐겨찾기에 등록한 모든 웹툰들을 쿼리하여 가져오는 api\n\
         해당 User의 ID와 동일한 UID를 가진 모든 북마크들을 리스트 형태로 받아온다.'''
+
+    parser = BookMark.parser() # 헤더를 추가하기 위한 변수
+    parser.add_argument('Authorization', location='headers') # 헤더를 입력받기 위해 기대 입력값을 추가
+    
     @jwt_required() #jwt 검증
+    @BookMark.expect(parser)
     def get(self, UID):
         data = db.session.query(models.BookMark).filter(models.BookMark.UID==UID)
         data = pd.read_sql(data.statement, data.session.bind)
@@ -44,7 +60,12 @@ class BookMarkList(Resource):
 class BookMarkDelete(Resource):
     '''User가 즐겨찾기에 등록한 웹툰 삭제\n\
         BookMark DB의 값 중에서 UID와 WebToonTitle이 동일한 항목 삭제'''
+
+    parser = BookMark.parser() # 헤더를 추가하기 위한 변수
+    parser.add_argument('Authorization', location='headers') # 헤더를 입력받기 위해 기대 입력값을 추가
+
     @jwt_required() #jwt 검증
+    @BookMark.expect(parser)
     def delete(self, UID, WebToonTitle):
         
         try:

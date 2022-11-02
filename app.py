@@ -11,7 +11,8 @@ import config
 
 app = Flask(__name__)
 CORS(app, resources={r'*':{'origins':'*'}})
-api = Api(app, title='DB Server Api', description='데이터베이스와 통신하기 위한 서버입니다.\n User, WorldCup, WebToob Table이 존재합니다.')
+api = Api(app, title='DB Server Api', description='데이터베이스와 통신하기 위한 서버입니다.\n User, WorldCup, WebToob Table이 존재합니다. \
+    \n 로그인 이후에는 기능을 사용하기 위해 jwt 토큰을 헤더를 통해 전송해야합니다.')
 
 #auth
 app.config['JWT_SECRET_KEY'] = 'WebTune'

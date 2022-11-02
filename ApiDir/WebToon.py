@@ -1,5 +1,5 @@
 from flask import request
-from flask_restx import Resource, Api, Namespace
+from flask_restx import Resource, Api, Namespace, fields
 import models
 from flask_sqlalchemy import SQLAlchemy
 #from PIL import Image # 이미지를 다루는 라이브러리
@@ -10,6 +10,15 @@ from flask_jwt_extended import *
 db = SQLAlchemy() # app.py에서 sqlalchemy 호출시 순환 호출 오류 발생하여 각 api마다 호출
 
 WebToon = Namespace('WebToon', description='WebToon DB(웹툰의 정보를 저장하는 DB)와 통신하는 Api')
+
+#swagger 문서화를 위한 모델 정의
+WebToon_field = WebToon.model('WebToon', { # 아직 안함
+    'ID' : fields.String(description='사용자 ID'),
+    'PassWd' : fields.String(description='비밀번호'),
+    'Age' : fields.String(description='나이, 숫자로 입력'),
+    'Job' : fields.String(description='직업, 숫자로 입력'),
+    'Sex' : fields.String(description='나이, 숫자로 입력')
+})
 
 @WebToon.route('')
 class WebToonAdd(Resource):
@@ -34,7 +43,12 @@ class WebToonAdd(Resource):
 
 @WebToon.route('/<Title>')
 class WebToonInfo(Resource):
+
+    parser = WebToon.parser() # 헤더를 추가하기 위한 변수
+    parser.add_argument('Authorization', location='headers') # 헤더를 입력받기 위해 기대 입력값을 추가
+
     @jwt_required() #jwt 검증
+    @WebToon.expect(parser)
     def get(self, Title):
         '''웹툰의 정보를 가져오는 API\n입력받은 제목과 동일한 웹툰의 정보를 반환한다.'''
         data = models.webtoonInfoJoin.query.filter(models.webtoonInfoJoin.이름.like(Title)).first()
@@ -66,7 +80,11 @@ class WebToonInfo(Resource):
 
 @WebToon.route('/Search/<Title>')
 class SearchWebToon(Resource):
+    parser = WebToon.parser() # 헤더를 추가하기 위한 변수
+    parser.add_argument('Authorization', location='headers') # 헤더를 입력받기 위해 기대 입력값을 추가
+
     @jwt_required() #jwt 검증
+    @WebToon.expect(parser)
     def get(self, Title):
         '''웹툰의 정보를 검색하는 api'''
         import sqlite3
