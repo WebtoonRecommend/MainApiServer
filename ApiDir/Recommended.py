@@ -41,7 +41,6 @@ class RecommendedGet(Resource):
         bookmarks = db.session.execute("select WebtoonTitle from book_mark where UID='{}'".format(UID)).fetchall() 
 
         bookmarks = [row[0] for row in bookmarks] # 리스트 형태로 변환
-        print(bookmarks)
 
         # 즐겨찾기 목록을 먼저 확인한 후 해당 유저가 즐겨찾기를 추가하지 않았으면 키워드를 확인한다.
 
