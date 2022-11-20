@@ -1,5 +1,5 @@
 from flask_restx import Resource, Api, Namespace, fields
-#import models
+import models
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import *
 from . import recommend_func
@@ -45,10 +45,24 @@ class RecommendedGet(Resource):
         # 즐겨찾기 목록을 먼저 확인한 후 해당 유저가 즐겨찾기를 추가하지 않았으면 키워드를 확인한다.
 
         if len(bookmarks) == 0:
+
             keywords = db.session.execute("select Word from key_words where UID='{}'".format(UID)).fetchall()
             keywords = [row[0] for row in keywords]
-            result = recommend_func.FirstRecommendations(keywords) # 추천 함수 호출
-            return result
+
+            # 단어 기반 추천
+            
+            # result = recommend_func.FirstRecommendations(keywords) # 추천 함수 호출
+            # return result
+
+            # 별점 높은 순위
+            result = []
+            for i in range(len(keywords)):
+                temp = db.session.query(models.webtoonInfoJoin).filter(models.webtoonInfoJoin.장르.like("%{}%".format(keywords[i]))).all()
+                temp = [[row.별점, row.이름] for row in temp] # json으로 변환 가능한 형태로 변환
+                result.extend(temp)
+            result = sorted(result, reverse=True) # 별점 순서로 정렬
+            return result[:10]
+
         else:
             result = recommend_func.Recommendations10(bookmarks) # 추천 함수 호출
             return result
