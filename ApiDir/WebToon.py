@@ -23,27 +23,6 @@ WebToon_field = WebToon.model('WebToon', { # 아직 안함
 parser = WebToon.parser() # 헤더를 추가하기 위한 변수
 parser.add_argument('Authorization', location='headers') # 헤더를 입력받기 위해 기대 입력값을 추가
 
-@WebToon.route('')
-class WebToonAdd(Resource):
-    @WebToon.doc(params={'ThumbNail':'썸네일이 저장된 링크', 'Author':'웹툰의 저자', 'Title':'WebToon의 제목',\
-        'Summary':'웹툰의 내용 요약(100자 이내)'})
-    @jwt_required() #jwt 검증
-    def post(self):
-        '''Webtoon의 정보를 추가하는 API\n이미지 링크, 제목, 요약, 작가를 입력받아 DB에 저장한다.'''
-        #file = Image.open(request.files['file']) # 파일 열기
-        Author = request.json.get('Author')        
-        Title = request.json.get('Title')
-        Summary = request.json.get('Summary')
-        #file.save('{}/ApiDir/pictures/'.format(os.getcwd()) + secure_filename(request.files['file'].filename)) # 절대경로로 위치를 지정하여야 저장이 가능함
-        ThumbNail = request.json.get('ThumbNail')#str('{}/ApiDir/pictures/'.format(os.getcwd()) + secure_filename(request.files['file'].filename))
-        
-        data = models.WebToon(Author=Author, Title=Title, Summary=Summary, ThumbNail=ThumbNail)
-        db.session.add(data)
-        db.session.commit()
-        db.session.flush()
-
-        return 0
-
 @WebToon.route('/<Title>')
 class WebToonInfo(Resource):
 

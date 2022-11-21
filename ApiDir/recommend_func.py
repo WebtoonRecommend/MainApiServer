@@ -87,7 +87,3 @@ def FirstRecommendations(words): # https://wikidocs.net/102705 참고, 처음 �
     recommend = WebToon.iloc[WebToon_indices].reset_index(drop=True)
 
     return recommend.to_dict()
-
-# print(FirstRecommendations(['연애', '대학', '사랑']))
-
-# print(Recommendations10(['대학일기', '대학원 탈출일지']))

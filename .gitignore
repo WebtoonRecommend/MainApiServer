@@ -1,4 +1,9 @@
 Api.db
 find_feature.py
 test.db
-
+setFlask.sh
+descrip_w2v
+Descrip.pkl
+document.pkl
+Title.pkl
+Story_Cosine.pkl
