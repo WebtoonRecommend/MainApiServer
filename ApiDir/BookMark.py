@@ -21,7 +21,7 @@ parser.add_argument('Authorization', location='headers') # 헤더를 입력받�
 
 @BookMark.route('')
 class BookMarkAdd(Resource):
-
+    
     @jwt_required() #jwt 검증
     @BookMark.expect(parser, BookMark_field)
     @BookMark.expect(BookMark_field)
@@ -42,13 +42,14 @@ class BookMarkAdd(Resource):
 
 @BookMark.route('/<UID>')
 class BookMarkList(Resource):
-    '''User가 즐겨찾기에 등록한 모든 웹툰들을 쿼리하여 가져오는 api\n\
-        해당 User의 ID와 동일한 UID를 가진 모든 북마크들을 리스트 형태로 받아온다.\n
-        만약 jwt의 주인의 id와 가져올 데이터의 id가 다른 경우 1을 반환한다.'''
     
     @jwt_required() #jwt 검증
     @BookMark.expect(parser)
     def get(self, UID):
+        '''User가 즐겨찾기에 등록한 모든 웹툰들을 쿼리하여 가져오는 api\n\
+        해당 User의 ID와 동일한 UID를 가진 모든 북마크들을 리스트 형태로 받아온다.\n
+        만약 jwt의 주인의 id와 가져올 데이터의 id가 다른 경우 1을 반환한다.'''
+
         temp_id = get_jwt_identity()
         if temp_id == UID:
             data = db.session.query(models.BookMark).filter(models.BookMark.UID==UID)
@@ -59,12 +60,12 @@ class BookMarkList(Resource):
 
 @BookMark.route('/<UID>/<WebToonTitle>')
 class BookMarkDelete(Resource):
-    '''User가 즐겨찾기에 등록한 웹툰 삭제\n\
-        BookMark DB의 값 중에서 UID와 WebToonTitle이 동일한 항목 삭제'''
 
     @jwt_required() #jwt 검증
     @BookMark.expect(parser)
     def delete(self, UID, WebToonTitle):
+        '''User가 즐겨찾기에 등록한 웹툰 삭제\n\
+        BookMark DB의 값 중에서 UID와 WebToonTitle이 동일한 항목 삭제'''
         
         temp_id = get_jwt_identity()
         if temp_id == UID:
