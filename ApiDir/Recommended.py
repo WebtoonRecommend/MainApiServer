@@ -2,6 +2,7 @@ from flask_restx import Resource, Api, Namespace, fields
 import models
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import *
+
 from . import recommend_func
 
 db = SQLAlchemy() # app.py에서 sqlalchemy 호출시 순환 호출 오류 발생하여 각 api마다 호출
@@ -43,6 +44,7 @@ class RecommendedGet(Resource):
             result = []
             for i in range(len(keywords)):
                 temp = db.session.query(models.webtoonInfoJoin).filter(models.webtoonInfoJoin.장르.like("%{}%".format(keywords[i]))).all()
+                temp = list(set(temp))
                 temp = [[row.별점, row.이름] for row in temp] # json으로 변환 가능한 형태로 변환
                 result.extend(temp)
             result = sorted(result, reverse=True) # 별점 순서로 정렬
