@@ -2,4 +2,4 @@
 
 #도커 빌드 및 실행
 sudo docker build --no-cache -t apiserver:0.0 .
-sudo docker run -it -p 80:5000 -v $(pwd):/home apiserver:0.0
+sudo docker run -it -p 80:5001 -v $(pwd):/home apiserver:0.0
