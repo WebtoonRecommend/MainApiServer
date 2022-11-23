@@ -90,8 +90,8 @@ def FirstRecommendations(words): # https://wikidocs.net/102705 참고, 처음 �
 
     return recommend
 
-print(FirstRecommendations(['연애', '대학', '사랑']))
+# print(FirstRecommendations(['연애', '대학', '사랑']))
 
-print(Recommendations10(['대학일기', '대학원 탈출일지']))
+# print(Recommendations10(['대학일기', '대학원 탈출일지']))
 
 # print(model.most_similar('대학원'))
