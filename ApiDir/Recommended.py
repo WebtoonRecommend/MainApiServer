@@ -44,10 +44,11 @@ class RecommendedGet(Resource):
             result = []
             for i in range(len(keywords)):
                 temp = db.session.query(models.webtoonInfoJoin).filter(models.webtoonInfoJoin.장르.like("%{}%".format(keywords[i]))).all()
-                temp = list(set(temp))
                 temp = [[row.별점, row.이름] for row in temp] # json으로 변환 가능한 형태로 변환
                 result.extend(temp)
+            result = list(set(result))
             result = sorted(result, reverse=True) # 별점 순서로 정렬
+
             return result[:10]
 
         else:
