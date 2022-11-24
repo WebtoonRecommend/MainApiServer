@@ -1,14 +1,19 @@
+import json
+import pandas as pd
+
 from flask import request
 from flask_restx import Resource, Api, Namespace, fields
-import models
 from flask_sqlalchemy import SQLAlchemy
-import pandas as pd
-import json
-from flask_jwt_extended import *
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
-db = SQLAlchemy() # app.py에서 sqlalchemy 호출시 순환 호출 오류 발생하여 각 api마다 호출
+import models
 
-BookMark = Namespace('BookMark', description='BookMark DB(User가 선호하는 웹툰를 저장하는 DB)와 통신하는 Api')
+
+db = SQLAlchemy()
+
+BookMark = Namespace(
+    'BookMark',
+    description='BookMark DB(User가 선호하는 웹툰를 저장하는 DB)와 통신하는 Api')
 
 #swagger 문서화를 위한 모델 정의
 BookMark_field = BookMark.model('BookMark', {
@@ -16,8 +21,10 @@ BookMark_field = BookMark.model('BookMark', {
     'Title' : fields.String(description='북마크에 저장할 웹툰의 제목')
 })
 
-parser = BookMark.parser() # 헤더를 추가하기 위한 변수
-parser.add_argument('Authorization', location='headers') # 헤더를 입력받기 위해 기대 입력값을 추가
+# jwt 헤더를 입력받기 위한 함수
+parser = BookMark.parser() 
+parser.add_argument('Authorization', location='headers')
+
 
 @BookMark.route('')
 class BookMarkAdd(Resource):
@@ -26,7 +33,12 @@ class BookMarkAdd(Resource):
     @BookMark.expect(parser, BookMark_field)
     @BookMark.expect(BookMark_field)
     def post(self):
-        '''User가 선호하는 웹툰를 저장하는 API\nUser ID와 웹툰 제목을 json의 형태로 전달받아 DB에 저장한다. \n uid는 필요없음'''
+        '''
+        User가 선호하는 웹툰를 저장하는 API\n
+        User ID와 웹툰 제목을 json의 형태로 전달받아 DB에 저장한다.\n
+        uid는 필요없음
+        '''
+        
         # 데이터 파싱
         Title = request.json.get('Title')
 
@@ -40,15 +52,18 @@ class BookMarkAdd(Resource):
         except:
             return 1 # 오류 발생시 코드
 
+
 @BookMark.route('/<UID>')
 class BookMarkList(Resource):
     
     @jwt_required() #jwt 검증
     @BookMark.expect(parser)
     def get(self, UID):
-        '''User가 즐겨찾기에 등록한 모든 웹툰들을 쿼리하여 가져오는 api\n\
+        '''
+        User가 즐겨찾기에 등록한 모든 웹툰들을 쿼리하여 가져오는 api\n\
         해당 User의 ID와 동일한 UID를 가진 모든 북마크들을 리스트 형태로 받아온다.\n
-        만약 jwt의 주인의 id와 가져올 데이터의 id가 다른 경우 1을 반환한다.'''
+        만약 jwt의 주인의 id와 가져올 데이터의 id가 다른 경우 1을 반환한다.
+        '''
 
         temp_id = get_jwt_identity()
         if temp_id == UID:
@@ -58,16 +73,22 @@ class BookMarkList(Resource):
         else:
             return 1 # 요청한 id와 가져올 데이터의 id가 다른 경우
 
+
 @BookMark.route('/<UID>/<WebToonTitle>')
 class BookMarkDelete(Resource):
 
     @jwt_required() #jwt 검증
     @BookMark.expect(parser)
     def delete(self, UID, WebToonTitle):
-        '''User가 즐겨찾기에 등록한 웹툰 삭제\n\
-        BookMark DB의 값 중에서 UID와 WebToonTitle이 동일한 항목 삭제'''
+        '''
+        User가 즐겨찾기에 등록한 웹툰 삭제\n\
+        BookMark DB의 값 중에서 UID와 WebToonTitle이 동일한 항목 삭제
+        '''
         
+        # jwt로 부터 id 추출
         temp_id = get_jwt_identity()
+
+        # 데이터를 요청한 jwt와 반환할 데이터의 uid가 일치하는지 확인 및 데이터 반환
         if temp_id == UID:
             try:
                 db.session.query(models.BookMark).filter(models.BookMark.UID==UID, models.BookMark.WebtoonTitle==WebToonTitle).delete()
