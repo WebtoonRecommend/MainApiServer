@@ -81,17 +81,22 @@ def FirstRecommendations(words): # https://wikidocs.net/102705 참고, 처음 �
    
     sim_scores = list(enumerate(doc2vec))
     sim_scores = sorted(sim_scores, key = lambda x: x[1], reverse=True)
-    sim_scores = sim_scores[1:11]
+    sim_scores = sim_scores[1:10+len(words)]
 
     WebToon_indices = [i[0] for i in sim_scores]
 
     recommend = WebToon.iloc[WebToon_indices].reset_index(drop=True)
     recommend = [['0', recommend['Title'][i]] for i in range(len(recommend['Title']))]
 
-    return recommend
+    for i in range(len(recommend)):
+        for j in words:
+            if recommend[i][1] == j:
+                recommend[i].pop(i)
 
-# print(FirstRecommendations(['연애', '대학', '사랑']))
+    return recommend[:10]
 
-# print(Recommendations10(['대학일기', '대학원 탈출일지']))
+print(FirstRecommendations(['연애', '대학', '사랑']))
+
+print(Recommendations10(['나노리스트', '이두나!']))
 
 # print(model.most_similar('대학원'))
