@@ -35,7 +35,7 @@ class RecommendedGet(Resource):
             keywords = db.session.execute("select Word from key_words where UID='{}'".format(UID)).fetchall()
             keywords = [row[0] for row in keywords]
 
-            # 단어 기반 추천
+            #단어 기반 추천
 
             # result = recommend_func.FirstRecommendations(keywords) # 추천 함수 호출
             # return result
@@ -46,9 +46,13 @@ class RecommendedGet(Resource):
                 temp = db.session.query(models.webtoonInfoJoin).filter(models.webtoonInfoJoin.장르.like("%{}%".format(keywords[i]))).all()
                 temp = [[row.별점, row.이름] for row in temp] # json으로 변환 가능한 형태로 변환
                 result.extend(temp)
-            result = list(set(result))
+            
             result = sorted(result, reverse=True) # 별점 순서로 정렬
-
+            for i in range(len(result)):
+                if i == len(result) - 1:
+                    break
+                elif result[i][1] == result[i+1][1]:
+                    result.pop(i)
             return result[:10]
 
         else:
