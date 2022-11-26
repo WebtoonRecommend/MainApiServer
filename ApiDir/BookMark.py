@@ -16,10 +16,13 @@ BookMark = Namespace(
     description='BookMark DB(User가 선호하는 웹툰를 저장하는 DB)와 통신하는 Api')
 
 #swagger 문서화를 위한 모델 정의
-BookMark_field = BookMark.model('BookMark', {
+BookMark_field = BookMark.model(
+    'BookMark', 
+    {
     'UID' : fields.String(description='사용자 ID'),
     'Title' : fields.String(description='북마크에 저장할 웹툰의 제목')
-})
+    }
+)
 
 # jwt 헤더를 입력받기 위한 함수
 parser = BookMark.parser() 
@@ -36,8 +39,7 @@ class BookMarkAdd(Resource):
         '''
         User가 선호하는 웹툰를 저장하는 API\n
         User ID와 웹툰 제목을 json의 형태로 전달받아 DB에 저장한다.\n
-        uid는 필요없음
-        '''
+        uid는 필요없음'''
         
         # 데이터 파싱
         Title = request.json.get('Title')
@@ -62,8 +64,7 @@ class BookMarkList(Resource):
         '''
         User가 즐겨찾기에 등록한 모든 웹툰들을 쿼리하여 가져오는 api\n\
         해당 User의 ID와 동일한 UID를 가진 모든 북마크들을 리스트 형태로 받아온다.\n
-        만약 jwt의 주인의 id와 가져올 데이터의 id가 다른 경우 1을 반환한다.
-        '''
+        만약 jwt의 주인의 id와 가져올 데이터의 id가 다른 경우 1을 반환한다.'''
 
         temp_id = get_jwt_identity()
         if temp_id == UID:

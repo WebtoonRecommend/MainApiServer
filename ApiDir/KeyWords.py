@@ -8,6 +8,7 @@ from flask_jwt_extended import jwt_required
 
 import models
 
+
 db = SQLAlchemy()
 
 KeyWords = Namespace(
@@ -19,8 +20,7 @@ parser.add_argument('Authorization', location='headers')
 
 #swagger 문서화를 위한 모델 정의
 KeyWord_field = KeyWords.model(
-    'KeyWords', 
-    {
+    'KeyWords', {
     'UID' : fields.String(description='사용자 ID'),
     'Word' : fields.String(description='사용자가 선호하는 단어')
     }
