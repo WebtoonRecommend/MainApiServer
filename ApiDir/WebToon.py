@@ -1,27 +1,24 @@
-from flask import request
-from flask_restx import Resource, Api, Namespace, fields
-import models
-from flask_sqlalchemy import SQLAlchemy
-#from PIL import Image # 이미지를 다루는 라이브러리
 import pandas as pd
 import json
-from flask_jwt_extended import *
+import sqlite3
+
+from flask import request
+from flask_restx import Resource, Api, Namespace, fields
+from flask_sqlalchemy import SQLAlchemy
+from flask_jwt_extended import jwt_required
+
+import models
+
 
 db = SQLAlchemy() # app.py에서 sqlalchemy 호출시 순환 호출 오류 발생하여 각 api마다 호출
 
-WebToon = Namespace('WebToon', description='WebToon DB(웹툰의 정보를 저장하는 DB)와 통신하는 Api')
-
-#swagger 문서화를 위한 모델 정의
-WebToon_field = WebToon.model('WebToon', { # 아직 안함
-    'ID' : fields.String(description='사용자 ID'),
-    'PassWd' : fields.String(description='비밀번호'),
-    'Age' : fields.String(description='나이, 숫자로 입력'),
-    'Job' : fields.String(description='직업, 숫자로 입력'),
-    'Sex' : fields.String(description='나이, 숫자로 입력')
-})
+WebToon = Namespace(
+    'WebToon',
+    description='WebToon DB(웹툰의 정보를 저장하는 DB)와 통신하는 Api')
 
 parser = WebToon.parser() # 헤더를 추가하기 위한 변수
 parser.add_argument('Authorization', location='headers') # 헤더를 입력받기 위해 기대 입력값을 추가
+
 
 @WebToon.route('/<Title>')
 class WebToonInfo(Resource):
@@ -29,7 +26,10 @@ class WebToonInfo(Resource):
     @jwt_required() #jwt 검증
     @WebToon.expect(parser)
     def get(self, Title):
-        '''웹툰의 정보를 가져오는 API\n입력받은 제목과 동일한 웹툰의 정보를 반환한다.'''
+        '''웹툰의 정보를 가져오는 API\n
+        입력받은 제목과 동일한 웹툰의 정보를 반환한다.
+        '''
+
         data = models.webtoonInfoJoin.query.filter(models.webtoonInfoJoin.이름.like(Title)).first()
         
         return {
@@ -47,15 +47,6 @@ class WebToonInfo(Resource):
             '썸네일':data.썸네일,
         }         
     
-    @jwt_required() #jwt 검증
-    def delete(self, Title):
-        '''웹툰의 제목을 입력받아 해당하는 웹툰을 삭제하는 API'''
-        try:
-            db.session.query(models.webtoonInfoJoin).filter(models.webtoonInfoJoin.이름==Title).delete()
-            db.session.commit()
-            return 0 # 쿼리 성공 시
-        except:
-            return 1 # 쿼리 실패 시
 
 @WebToon.route('/Search/<Title>')
 class SearchWebToon(Resource):
@@ -64,7 +55,9 @@ class SearchWebToon(Resource):
     @WebToon.expect(parser)
     def get(self, Title):
         '''웹툰의 정보를 검색하는 api'''
-        import sqlite3
+        
         con = sqlite3.connect('./test.db')
-        data = pd.read_sql("SELECT * FROM webtoon_info_join WHERE 이름 like '%{}%'".format(Title), con)
+        data = pd.read_sql(
+            "SELECT * FROM webtoon_info_join WHERE 이름 like '%{}%'".format(Title), con)
+
         return json.loads(data.to_json(orient='records'))

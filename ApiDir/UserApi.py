@@ -8,7 +8,8 @@ import models
 
 db = SQLAlchemy() # app.py에서 sqlalchemy 호출시 순환 호출 오류 발생하여 각 api마다 호출
 
-User = Namespace('User', 
+User = Namespace(
+    'User', 
     description='User DB(User의 정보를 저장하는 DB)와 통신하는 Api')
 
 #swagger 문서화를 위한 모델 정의

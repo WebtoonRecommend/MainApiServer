@@ -7,7 +7,9 @@ from . import recommend_func
 
 db = SQLAlchemy() # app.py에서 sqlalchemy 호출시 순환 호출 오류 발생하여 각 api마다 호출
 
-Recommended = Namespace('Recommended', description='머신러닝 모델에서 웹툰을 추천받는 API')
+Recommended = Namespace(
+    'Recommended', 
+    description='머신러닝 모델에서 웹툰을 추천받는 API')
 
 # jwt 인증을 위해 헤더를 입력하도록 추가
 parser = Recommended.parser()
