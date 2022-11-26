@@ -13,7 +13,7 @@ User = Namespace(
     description='User DB(User의 정보를 저장하는 DB)와 통신하는 Api')
 
 #swagger 문서화를 위한 모델 정의
-User_field = User.model(
+UserField = User.model(
     'User', {
     'ID' : fields.String(description='사용자 ID'),
     'PassWd' : fields.String(description='비밀번호'),
@@ -29,7 +29,7 @@ parser.add_argument('Authorization', location='headers') # 헤더를 입력받�
 
 @User.route('') #회원가입의 URL  
 class UserAdd(Resource):
-    @User.expect(User_field) # swagger를 통해 데이터베이스를 조작하도록 등록
+    @User.expect(UserField) # swagger를 통해 데이터베이스를 조작하도록 등록
     def post(self):
         '''User의 정보를 저장하는 API\n
         Id, 비밀번호, 나이, 직업, 성별을 json의 형태로 전달받아 DB에 저장한다.
@@ -73,7 +73,7 @@ class UserEdit(Resource):
             'Sex': data.Sex
         }
     
-    @User.expect(User_field)
+    @User.expect(UserField)
     def post(self, UID):
         '''User 로그인 API\n
         로그인 정보를 받아 옳을 경우 jwt 문자열, 아닐경우 1을 반환한다.
