@@ -2,7 +2,7 @@ from flask import request
 from flask_restx import Resource, Api, Namespace, fields
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import bcrypt # 로그인 비밀번호 암호화를 위한 라이브러리
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, create_access_token
 
 import models
 
