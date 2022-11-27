@@ -8,4 +8,4 @@ RUN apt-get update; apt-get install -y python3-pip; \
 
 CMD cd /; . /venv/bin/activate;\
     cd /; cd home;\
-    gunicorn -b 0.0.0.0:5001 app:Server
+    gunicorn -b 0.0.0.0:5001 app:app
