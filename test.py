@@ -15,20 +15,36 @@ class UserLogInTest(unittest.TestCase):
 
     def setUp(self):
         self.host = 'http://127.0.0.1:5001/User'
-        self.right_param = [
+        self.RightParam = [
                 {'ID':'ch011015', 'PassWd':"011015"},
                 {'ID':'test', 'PassWd':"test"}
             ]
-        self.wrong_param = [
+        self.WrongPdParam = [
                 {'ID':'ch011015', 'PassWd':'1111'},
+                {'ID':'test', 'PassWd':'2343'},
+            ]
+        self.WrongUserParam = [
+                {'ID':'ch01101', 'PassWd':'1111'},
                 {'ID':'nvoawienlgfka', 'PassWd':'2343'},
             ]
         
     def testRightParam(self):
-        for i in range(len(self.right_param)):
-            response = requests.post(self.host+'/{}'.format(self.right_param[i]['ID']), json=self.right_param[i])
+        for i in range(len(self.RightParam)):
+            response = requests.post(self.host+'/{}'.format(self.RightParam[i]['ID']), json=self.RightParam[i])
             data = json.loads(response.content)
-            self.assertEqual(jwt.decode(data, key=config.JWT_SECRET_KEY, algorithms=["HS256"])['sub'], self.right_param[i]['ID'])
+            self.assertEqual(jwt.decode(data, key=config.JWT_SECRET_KEY, algorithms=["HS256"])['sub'], self.RightParam[i]['ID'])
+
+    def testWrongPdParam(self):
+        for i in range(len(self.WrongPdParam)):
+            response = requests.post(self.host+'/{}'.format(self.WrongPdParam[i]['ID']), json=self.WrongPdParam[i])
+            data = json.loads(response.content)
+            self.assertEqual(data, 1) # 로그인 비밀번호가 틀렸을 때
+
+    def testWrongUserParam(self):
+        for i in range(len(self.WrongUserParam)):
+            response = requests.post(self.host+'/{}'.format(self.WrongUserParam[i]['ID']), json=self.WrongUserParam[i])
+            data = json.loads(response.content)
+            self.assertEqual(data, 2) # User가 존재하지 않을 때
 
 
 if __name__ == '__main__':
