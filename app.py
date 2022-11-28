@@ -1,3 +1,5 @@
+import ssl
+
 from flask import Flask
 from flask_restx import Resource, Api
 from flask_sqlalchemy import SQLAlchemy

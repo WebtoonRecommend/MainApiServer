@@ -82,9 +82,10 @@ class UserEdit(Resource):
         '''
 
         ID = UID
-
-        data = db.session.query(models.User).filter(models.User.ID.like(ID)).first()
         
+        data = db.session.query(models.User).filter(models.User.ID.like(ID)).first()
+        print(data)
+        print(request.json.get('PassWd').encode('utf-8'))
         try:
             PW = bcrypt.checkpw(request.json.get('PassWd').encode('utf-8'), data.PassWd) # 비밀번호 검증. 만약 id가 존재하지 않으면 attributeError가 발생한다.
         except AttributeError:
