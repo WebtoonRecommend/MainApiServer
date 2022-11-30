@@ -66,7 +66,6 @@ class RecommendedGet(Resource):
 
         else:
             # 즐겨찾기 기반 추천
-            print(bookmarks)
             result = recommend_func.Recommendations10(bookmarks, int(days))
             
             return result

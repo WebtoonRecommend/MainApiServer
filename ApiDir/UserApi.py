@@ -45,16 +45,20 @@ class UserAdd(Resource):
         except ValueError:
             return 'Age, Job, Sex should be integer.'
         
+        # user에 맞는 형태로 변환 후 session을 열고 저장
+        User_data = models.User(ID=ID, PassWd=PassWd, Age=Age, Job=Job, Sex=Sex)
+        db.session.add(User_data)
+
+        # commit 실행 과정에서 자동으로 rollback이 실행되지 않는 경우가 발생하여 명시적으로 롤백 실행
         try:
-            # user에 맞는 형태로 변환 후 session을 열고 저장
-            User_data = models.User(ID=ID, PassWd=PassWd, Age=Age, Job=Job, Sex=Sex)
-            db.session.add(User_data)
             db.session.commit()
             db.session.flush()
-            return 0
-
         except:
+            db.session.rollback()
+            
             return 'This User already exist.'
+
+        return 0
 
 
 @User.route('/<UID>')
@@ -87,8 +91,6 @@ class UserEdit(Resource):
         ID = UID
         
         data = db.session.query(models.User).filter(models.User.ID.like(ID)).first()
-        print(data)
-        print(request.json.get('PassWd').encode('utf-8'))
         try:
             PW = bcrypt.checkpw(request.json.get('PassWd').encode('utf-8'), data.PassWd) # 비밀번호 검증. 만약 id가 존재하지 않으면 attributeError가 발생한다.
         except AttributeError:

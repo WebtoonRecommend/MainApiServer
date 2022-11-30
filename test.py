@@ -4,8 +4,6 @@ import json
 
 import jwt
 from flask_jwt_extended import get_jwt_identity
-import jsonify
-import sqlite3
 
 import config
 import ApiDir
@@ -31,8 +29,8 @@ class UserLogInTest(unittest.TestCase):
     def testRightParam(self):
         for i in range(len(self.RightParam)):
             response = requests.post(
-                self.host + "/{}".format(self.RightParam[i]["ID"]),
-                json=self.RightParam[i],
+                self.host + '/{}'.format(self.RightParam[i]["ID"]),
+                json=self.RightParam[i]
             )
             data = json.loads(response.content)
             self.assertEqual(
@@ -78,6 +76,7 @@ class UserAddTest(unittest.TestCase):
             {"ID": "test5", "PassWd": "test3", "Age": "22", "Job": "0", "Sex": "hi"},
         ]
     
+    @unittest.skip('이미 실행한 테스트, 삽입하는 유저가 이미 존재하므로 해당 유저 삭제 후 진행')
     def testRightCase(self):
         for i in range(len(self.RightParam)):
             response = requests.post(self.host, json=self.RightParam[i])
@@ -85,10 +84,16 @@ class UserAddTest(unittest.TestCase):
             self.assertEqual(data, 0)
     
     def testIdExistCase(self):
-        for i in range(len(self.RightParam)):
+        for i in range(len(self.IdExistParam)):
             response = requests.post(self.host, json=self.IdExistParam[i])
             data = json.loads(response.content)
-            self.assertEqual(data, 0)
+            self.assertEqual(data, 'This User already exist.')
+
+    def testNotIntCase(self):
+        for i in range(len(self.NotIntParam)):
+            response = requests.post(self.host, json=self.NotIntParam[i])
+            data = json.loads(response.content)
+            self.assertEqual(data, 'Age, Job, Sex should be integer.')
 
 
 if __name__ == "__main__":
