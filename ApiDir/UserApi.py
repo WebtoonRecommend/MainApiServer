@@ -55,7 +55,7 @@ class UserAdd(Resource):
             db.session.flush()
         except:
             db.session.rollback()
-            
+
             return 'This User already exist.'
 
         return 0
@@ -74,11 +74,17 @@ class UserEdit(Resource):
 
         data = db.session.query(models.User).filter(models.User.ID.like(UID)).first()
 
-        return {
-            'Age': data.Age,
-            'Job': data.Job,
-            'Sex': data.Sex
-        }
+        # 존재하지 않는 사용자의 정보를 요청한 경우
+        try:
+            return {
+                'Age': data.Age,
+                'Job': data.Job,
+                'Sex': data.Sex
+            }    
+        except AttributeError:
+            return "This User doesn't exist"
+
+        
     
     @User.expect(UserField)
     def post(self, UID):

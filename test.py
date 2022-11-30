@@ -27,33 +27,33 @@ class UserLogInTest(unittest.TestCase):
         ]
 
     def testRightParam(self):
-        for i in range(len(self.RightParam)):
+        for i in self.RightParam:
             response = requests.post(
-                self.host + "/{}".format(self.RightParam[i]["ID"]),
-                json=self.RightParam[i],
+                self.host + "/{}".format(i["ID"]),
+                json=i,
             )
             data = json.loads(response.content)
             self.assertEqual(
                 jwt.decode(data, key=config.JWT_SECRET_KEY, algorithms=["HS256"])[
                     "sub"
                 ],
-                self.RightParam[i]["ID"],
+                i["ID"],
             )
 
     def testWrongPdParam(self):
-        for i in range(len(self.WrongPdParam)):
+        for i in self.WrongPdParam:
             response = requests.post(
-                self.host + "/{}".format(self.WrongPdParam[i]["ID"]),
-                json=self.WrongPdParam[i],
+                self.host + "/{}".format(i["ID"]),
+                json=i,
             )
             data = json.loads(response.content)
             self.assertEqual(data, 1)  # 로그인 비밀번호가 틀렸을 때
 
     def testWrongUserParam(self):
-        for i in range(len(self.WrongUserParam)):
+        for i in self.WrongUserParam:
             response = requests.post(
-                self.host + "/{}".format(self.WrongUserParam[i]["ID"]),
-                json=self.WrongUserParam[i],
+                self.host + "/{}".format(i["ID"]),
+                json=i,
             )
             data = json.loads(response.content)
             self.assertEqual(data, 2)  # User가 존재하지 않을 때
@@ -78,20 +78,20 @@ class UserAddTest(unittest.TestCase):
 
     @unittest.skip("이미 실행한 테스트, 삽입하는 유저가 이미 존재하므로 해당 유저 삭제 후 진행")
     def testRightCase(self):
-        for i in range(len(self.RightParam)):
-            response = requests.post(self.host, json=self.RightParam[i])
+        for i in self.RightParam:
+            response = requests.post(self.host, json=i)
             data = json.loads(response.content)
             self.assertEqual(data, 0)
 
     def testIdExistCase(self):
-        for i in range(len(self.IdExistParam)):
-            response = requests.post(self.host, json=self.IdExistParam[i])
+        for i in self.IdExistParam:
+            response = requests.post(self.host, json=i)
             data = json.loads(response.content)
             self.assertEqual(data, "This User already exist.")
 
     def testNotIntCase(self):
-        for i in range(len(self.NotIntParam)):
-            response = requests.post(self.host, json=self.NotIntParam[i])
+        for i in self.NotIntParam:
+            response = requests.post(self.host, json=i)
             data = json.loads(response.content)
             self.assertEqual(data, "Age, Job, Sex should be integer.")
 
@@ -99,7 +99,7 @@ class UserAddTest(unittest.TestCase):
 class UserGetTest(unittest.TestCase):
     def setUp(self):
         self.host = "http://127.0.0.1:5001/User"
-        self.NotIdExistParam = [
+        self.IdNotExistParam = [
             {"ID": "test6", "PassWd": "1111", "Age": "22", "Job": "0", "Sex": "0"},
             {"ID": "test7", "PassWd": "2343", "Age": "22", "Job": "0", "Sex": "0"},
         ]
@@ -110,26 +110,33 @@ class UserGetTest(unittest.TestCase):
 
         # api 테스트를 위한 jwt 토큰 저장
         self.jwt_l = {}
-        for i in range(len(self.IdExistParam)):
-            self.jwt_l["{}".format(self.IdExistParam[i]["ID"])] = json.loads(
+        for i in self.IdExistParam:
+            self.jwt_l[i["ID"]] = json.loads(
                 requests.post(
-                    self.host + "/{}".format(self.IdExistParam[i]["ID"]),
-                    json=self.IdExistParam[i],
+                    self.host + "/{}".format(i["ID"]),
+                    json=i,
                 ).content
             )
 
     def testGetUserExist(self):
-        for i in range(len(self.IdExistParam)):
+        for i in self.IdExistParam:
             response = requests.get(
-                self.host + "/{}".format(self.IdExistParam[i]["ID"]),
+                self.host + "/{}".format(i["ID"]),
                 headers={
-                    "Authorization": "Bearer " + self.jwt_l[self.IdExistParam[i]["ID"]]
+                    "Authorization": "Bearer " + self.jwt_l[i["ID"]]
                 },
             )
             data = json.loads(response.content)
-            self.assertEqual(data["Age"], int(self.IdExistParam[i]["Age"]))
-            self.assertEqual(data["Job"], int(self.IdExistParam[i]["Job"]))
-            self.assertEqual(data["Sex"], int(self.IdExistParam[i]["Sex"]))
+            self.assertEqual(data["Age"], int(i["Age"]))
+            self.assertEqual(data["Job"], int(i["Job"]))
+            self.assertEqual(data["Sex"], int(i["Sex"]))
+
+    def testGetUserNotExist(self):
+        for i in self.IdNotExistParam:
+            response = requests.get(self.host+'/{}'.format(i['ID']), headers={"Authorization": "Bearer " + self.jwt_l['test1']}) # 타인의 jwt로 정보 획득 시도
+            data = json.loads(response.content)
+            self.assertEqual(data, "This User doesn't exist")
+
 
 
 if __name__ == "__main__":
