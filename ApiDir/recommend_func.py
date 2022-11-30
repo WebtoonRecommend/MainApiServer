@@ -98,8 +98,8 @@ def FirstRecommendations(
     return recommend[:10]
 
 
-print(FirstRecommendations(["연애", "대학", "사랑"]))
+# print(FirstRecommendations(["연애", "대학", "사랑"]))
 
-print(Recommendations10(["나노리스트", "이두나!"]))
+# print(Recommendations10(['대학일기', '나노리스트']))
 
 # print(model.most_similar('대학원'))

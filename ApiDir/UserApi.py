@@ -38,10 +38,13 @@ class UserAdd(Resource):
         # 데이터 입력값으로부터 가져오기
         ID = request.json.get('ID')
         PassWd = bcrypt.hashpw(request.json.get('PassWd').encode('utf-8'), bcrypt.gensalt())
-        Age = int(request.json.get('Age'))
-        Job = int(request.json.get('Job'))
-        Sex = int(request.json.get('Sex'))
-
+        try:
+            Age = int(request.json.get('Age'))
+            Job = int(request.json.get('Job'))
+            Sex = int(request.json.get('Sex'))
+        except ValueError:
+            return 'Age, Job, Sex should be integer.'
+        
         try:
             # user에 맞는 형태로 변환 후 session을 열고 저장
             User_data = models.User(ID=ID, PassWd=PassWd, Age=Age, Job=Job, Sex=Sex)
@@ -51,7 +54,7 @@ class UserAdd(Resource):
             return 0
 
         except:
-            return 1 
+            return 'This User already exist.'
 
 
 @User.route('/<UID>')
