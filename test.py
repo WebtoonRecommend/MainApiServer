@@ -29,8 +29,8 @@ class UserLogInTest(unittest.TestCase):
     def testRightParam(self):
         for i in range(len(self.RightParam)):
             response = requests.post(
-                self.host + '/{}'.format(self.RightParam[i]["ID"]),
-                json=self.RightParam[i]
+                self.host + "/{}".format(self.RightParam[i]["ID"]),
+                json=self.RightParam[i],
             )
             data = json.loads(response.content)
             self.assertEqual(
@@ -66,7 +66,7 @@ class UserAddTest(unittest.TestCase):
             {"ID": "test1", "PassWd": "test1", "Age": "22", "Job": "0", "Sex": "0"},
             {"ID": "test2", "PassWd": "test2", "Age": "22", "Job": "0", "Sex": "1"},
         ]
-        self.IdExistParam = [ # Id가 이미 존재하는 경우
+        self.IdExistParam = [  # Id가 이미 존재하는 경우
             {"ID": "ch011015", "PassWd": "1111", "Age": "22", "Job": "0", "Sex": "0"},
             {"ID": "test", "PassWd": "2343", "Age": "22", "Job": "0", "Sex": "0"},
         ]
@@ -75,25 +75,61 @@ class UserAddTest(unittest.TestCase):
             {"ID": "test4", "PassWd": "test3", "Age": "22", "Job": "hi", "Sex": "0"},
             {"ID": "test5", "PassWd": "test3", "Age": "22", "Job": "0", "Sex": "hi"},
         ]
-    
-    @unittest.skip('이미 실행한 테스트, 삽입하는 유저가 이미 존재하므로 해당 유저 삭제 후 진행')
+
+    @unittest.skip("이미 실행한 테스트, 삽입하는 유저가 이미 존재하므로 해당 유저 삭제 후 진행")
     def testRightCase(self):
         for i in range(len(self.RightParam)):
             response = requests.post(self.host, json=self.RightParam[i])
             data = json.loads(response.content)
             self.assertEqual(data, 0)
-    
+
     def testIdExistCase(self):
         for i in range(len(self.IdExistParam)):
             response = requests.post(self.host, json=self.IdExistParam[i])
             data = json.loads(response.content)
-            self.assertEqual(data, 'This User already exist.')
+            self.assertEqual(data, "This User already exist.")
 
     def testNotIntCase(self):
         for i in range(len(self.NotIntParam)):
             response = requests.post(self.host, json=self.NotIntParam[i])
             data = json.loads(response.content)
-            self.assertEqual(data, 'Age, Job, Sex should be integer.')
+            self.assertEqual(data, "Age, Job, Sex should be integer.")
+
+
+class UserGetTest(unittest.TestCase):
+    def setUp(self):
+        self.host = "http://127.0.0.1:5001/User"
+        self.NotIdExistParam = [
+            {"ID": "test6", "PassWd": "1111", "Age": "22", "Job": "0", "Sex": "0"},
+            {"ID": "test7", "PassWd": "2343", "Age": "22", "Job": "0", "Sex": "0"},
+        ]
+        self.IdExistParam = [
+            {"ID": "test1", "PassWd": "test1", "Age": "22", "Job": "0", "Sex": "0"},
+            {"ID": "test2", "PassWd": "test2", "Age": "22", "Job": "0", "Sex": "1"},
+        ]
+
+        # api 테스트를 위한 jwt 토큰 저장
+        self.jwt_l = {}
+        for i in range(len(self.IdExistParam)):
+            self.jwt_l["{}".format(self.IdExistParam[i]["ID"])] = json.loads(
+                requests.post(
+                    self.host + "/{}".format(self.IdExistParam[i]["ID"]),
+                    json=self.IdExistParam[i],
+                ).content
+            )
+
+    def testGetUserExist(self):
+        for i in range(len(self.IdExistParam)):
+            response = requests.get(
+                self.host + "/{}".format(self.IdExistParam[i]["ID"]),
+                headers={
+                    "Authorization": "Bearer " + self.jwt_l[self.IdExistParam[i]["ID"]]
+                },
+            )
+            data = json.loads(response.content)
+            self.assertEqual(data["Age"], int(self.IdExistParam[i]["Age"]))
+            self.assertEqual(data["Job"], int(self.IdExistParam[i]["Job"]))
+            self.assertEqual(data["Sex"], int(self.IdExistParam[i]["Sex"]))
 
 
 if __name__ == "__main__":
