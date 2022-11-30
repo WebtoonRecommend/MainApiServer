@@ -14,11 +14,11 @@ parser = Recommended.parser()
 parser.add_argument("Authorization", location="headers")
 
 
-@Recommended.route("/<UID>")
+@Recommended.route("/<UID>/<days>")
 class RecommendedGet(Resource):
     @jwt_required()  # jwt 검증
     @Recommended.expect(parser)
-    def get(self, UID):
+    def get(self, UID, days):
         """User에게 웹툰을 추천하는 api\n\
         해당 User의 즐겨찾기와 키워드를 참고하여 추천 목록을 받아온다.\n\
         jwt 인증의 경우 헤더에 Authorization: Bearer jwt를 입력하여야 한다.
@@ -66,5 +66,7 @@ class RecommendedGet(Resource):
 
         else:
             # 즐겨찾기 기반 추천
-            result = recommend_func.Recommendations10(bookmarks)
+            print(bookmarks)
+            result = recommend_func.Recommendations10(bookmarks, int(days))
+            
             return result
