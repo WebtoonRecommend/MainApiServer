@@ -140,9 +140,56 @@ class UserGetTest(unittest.TestCase):
 
 
 class KeyWordTest(unittest.TestCase):
-    def setUp():
+    def setUp(self):
         self.host = "http://127.0.0.1:5001/KeyWords"
-        self.KeyWordEmptyParam = []
+        self.KeyWordEmptyParam = [
+            {"ID": "test1", "PassWd": "test1"},
+            {"ID": "test2", "PassWd": "test2"},
+        ]
+        self.KeyWordOnlyParam = [
+            {"ID": "test", "PassWd": "test"},
+        ]
+        self.KeyWordAndBookMark = [
+            {"ID": "ch011015", "PassWd": "011015"},
+        ]
+        self.jwt_l = {}
+        for i in self.KeyWordOnlyParam:
+            self.jwt_l[i["ID"]] = json.loads(
+                requests.post(
+                    "http://127.0.0.1:5001/User/{}".format(i["ID"]),
+                    json=i,
+                ).content
+            )
+        for i in self.KeyWordAndBookMark:
+            self.jwt_l[i["ID"]] = json.loads(
+                requests.post(
+                    "http://127.0.0.1:5001/User/{}".format(i["ID"]),
+                    json=i,
+                ).content
+            )
+        for i in self.KeyWordEmptyParam:
+            self.jwt_l[i["ID"]] = json.loads(
+                requests.post(
+                    "http://127.0.0.1:5001/User/{}".format(i["ID"]),
+                    json=i,
+                ).content
+            )
+
+    def testKeyWordOnlyGetCase(self):
+        for i in self.KeyWordOnlyParam:
+            response = requests.get(
+                self.host, headers={"Authorization": "Bearer " + self.jwt_l[i["ID"]]}
+            )
+            data = json.loads(response.content)
+            self.assertNotEqual(len(data), 0)
+
+    def testGetKeyWordEmptyCase(self):
+        for i in self.KeyWordEmptyParam:
+            response = requests.get(
+                self.host, headers={"Authorization": "Bearer " + self.jwt_l[i["ID"]]}
+            )
+            data = json.loads(response.content)
+            self.assertEqual(data, "You don't add any Keyword. Please add Keyword.")
 
 
 # class RecommendTest(unittest.TestCase):

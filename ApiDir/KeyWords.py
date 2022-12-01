@@ -37,7 +37,10 @@ class KeyWordAddGet(Resource):
         UID = get_jwt_identity()
         data = db.session.query(models.KeyWords).filter(models.KeyWords.UID == UID)
         data = pd.read_sql(data.statement, data.session.bind)
-        return json.loads(data.to_json(orient="records"))
+        if len(data) == 0:
+            return "You don't add any Keyword. Please add Keyword."
+        else:
+            return json.loads(data.to_json(orient="records"))
 
     @jwt_required()  # jwt 검증
     @KeyWords.expect(parser, KeyWord_field)  # 검증용 헤더 추가
