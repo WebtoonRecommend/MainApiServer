@@ -1,6 +1,6 @@
 from flask_restx import Resource, Api, Namespace, fields
 from flask_sqlalchemy import SQLAlchemy
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 import models
 from . import recommend_func
@@ -14,16 +14,17 @@ parser = Recommended.parser()
 parser.add_argument("Authorization", location="headers")
 
 
-@Recommended.route("/<UID>/<days>")
+@Recommended.route("/<days>")
 class RecommendedGet(Resource):
     @jwt_required()  # jwt 검증
     @Recommended.expect(parser)
-    def get(self, UID, days):
+    def get(self, days):
         """User에게 웹툰을 추천하는 api\n\
         해당 User의 즐겨찾기와 키워드를 참고하여 추천 목록을 받아온다.\n\
         jwt 인증의 경우 헤더에 Authorization: Bearer jwt를 입력하여야 한다.
         """
 
+        UID = get_jwt_identity()
         # 즐겨찾기 목록 가져오기
         # 쿼리 결과의 형태를 읽을 수 있는 형태로 변환(.fetchall의 역할)
         bookmarks = db.session.execute(
@@ -39,11 +40,19 @@ class RecommendedGet(Resource):
             keywords = [row[0] for row in keywords]
 
             # 단어 기반 추천
-            result = recommend_func.FirstRecommendations(keywords)
+            try:
+                result = recommend_func.FirstRecommendations(keywords, int(days))
+            except ValueError:
+                return "Please enter a 'Only Number' for days"
+            except ZeroDivisionError:
+                return "This User doesn't add KeyWord"
+
             return result
 
         else:
             # 즐겨찾기 기반 추천
-            result = recommend_func.Recommendations10(bookmarks, int(days))
-
+            try:
+                result = recommend_func.Recommendations10(bookmarks, int(days))
+            except ValueError:
+                return "Please enter a 'Only Number' for days"
             return result

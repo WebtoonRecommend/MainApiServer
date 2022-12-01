@@ -10,3 +10,4 @@ Story_Cosine.pkl
 send_scp.sh
 git.sh
 ConServer.sh
+test_func.py

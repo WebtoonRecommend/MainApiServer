@@ -7,6 +7,7 @@ from flask_jwt_extended import get_jwt_identity
 
 import config
 import ApiDir
+import test_func
 
 
 # UserApi 테스트 코드
@@ -71,7 +72,6 @@ class UserAddTest(unittest.TestCase):
             {"ID": "test", "PassWd": "2343", "Age": "22", "Job": "0", "Sex": "0"},
         ]
         self.NotIntParam = [
-            {"ID": "test3", "PassWd": "test3", "Age": "hi", "Job": "0", "Sex": "0"},
             {"ID": "test4", "PassWd": "test3", "Age": "22", "Job": "hi", "Sex": "0"},
             {"ID": "test5", "PassWd": "test3", "Age": "22", "Job": "0", "Sex": "hi"},
         ]
@@ -139,43 +139,23 @@ class UserGetTest(unittest.TestCase):
             self.assertEqual(data, "This User doesn't exist")
 
 
-class KeyWordTest(unittest.TestCase):
+class KeyWordGetTest(unittest.TestCase):
     def setUp(self):
         self.host = "http://127.0.0.1:5001/KeyWords"
         self.KeyWordEmptyParam = [
-            {"ID": "test1", "PassWd": "test1"},
             {"ID": "test2", "PassWd": "test2"},
+            {"ID": "test3", "PassWd": "test3"},
         ]
         self.KeyWordOnlyParam = [
             {"ID": "test", "PassWd": "test"},
         ]
-        self.KeyWordAndBookMark = [
-            {"ID": "ch011015", "PassWd": "011015"},
-        ]
-        self.jwt_l = {}
-        for i in self.KeyWordOnlyParam:
-            self.jwt_l[i["ID"]] = json.loads(
-                requests.post(
-                    "http://127.0.0.1:5001/User/{}".format(i["ID"]),
-                    json=i,
-                ).content
-            )
-        for i in self.KeyWordAndBookMark:
-            self.jwt_l[i["ID"]] = json.loads(
-                requests.post(
-                    "http://127.0.0.1:5001/User/{}".format(i["ID"]),
-                    json=i,
-                ).content
-            )
-        for i in self.KeyWordEmptyParam:
-            self.jwt_l[i["ID"]] = json.loads(
-                requests.post(
-                    "http://127.0.0.1:5001/User/{}".format(i["ID"]),
-                    json=i,
-                ).content
-            )
 
-    def testKeyWordOnlyGetCase(self):
+        self.jwt_l = {}
+
+        self.jwt_l = test_func.get_jwt(self.KeyWordEmptyParam, self.jwt_l)
+        self.jwt_l = test_func.get_jwt(self.KeyWordOnlyParam, self.jwt_l)
+
+    def testGetKeyWordOnlyCase(self):
         for i in self.KeyWordOnlyParam:
             response = requests.get(
                 self.host, headers={"Authorization": "Bearer " + self.jwt_l[i["ID"]]}
@@ -186,24 +166,77 @@ class KeyWordTest(unittest.TestCase):
     def testGetKeyWordEmptyCase(self):
         for i in self.KeyWordEmptyParam:
             response = requests.get(
-                self.host, headers={"Authorization": "Bearer " + self.jwt_l[i["ID"]]}
+                self.host,
+                headers={"Authorization": "Bearer " + self.jwt_l[i["ID"]]},
             )
             data = json.loads(response.content)
             self.assertEqual(data, "You don't add any Keyword. Please add Keyword.")
 
 
-# class RecommendTest(unittest.TestCase):
-#     def setUp():
-#         self.host = '127.0.0.1:5001/Recommended/'
-#         self.BookMarkExistParam = [
-#             {"ID": "ch011015", "PassWd": "011015"},
-#         ]
-#         self.KeyWordExistParam = [
+# class KeyWordPostTest(unittest.TestCase):
+#     def setUp(self):
 
-#         ]
-#         self.NothingExistParam = [
 
-#         ]
+class RecommendTest(unittest.TestCase):
+    def setUp(self):
+        self.host = "http://127.0.0.1:5001/Recommended/"
+        self.BookMarkExistParam = [
+            {"ID": "ch011015", "PassWd": "011015", "Days": "0"},
+        ]
+        self.KeyWordExistParam = [
+            {"ID": "test", "PassWd": "test", "Days": "0"},
+            {"ID": "test1", "PassWd": "test1", "Days": "1"},
+        ]
+        self.NothingExistParam = [
+            {"ID": "test2", "PassWd": "test2"},
+            {"ID": "test3", "PassWd": "test3"},
+        ]
+
+        self.jwts = {}
+
+        self.jwts = test_func.get_jwt(self.BookMarkExistParam, self.jwts)
+        self.jwts = test_func.get_jwt(self.KeyWordExistParam, self.jwts)
+        self.jwts = test_func.get_jwt(self.NothingExistParam, self.jwts)
+
+    # 북마크 기반 추천
+    def testBookMarkRecommend(self):
+        for i in self.BookMarkExistParam:
+            response = requests.get(
+                self.host + "{}".format(i["Days"]),
+                headers={"Authorization": "Bearer " + self.jwts[i["ID"]]},
+            )
+            data = json.loads(response.content)
+            self.assertEqual(type(data), type([]))
+            self.assertNotEqual(len(data), 0)
+
+    # 키워드 기반 추천
+    def testKeyWordRecommend(self):
+        for i in self.KeyWordExistParam:
+            response = requests.get(
+                self.host + "{}".format(i["Days"]),
+                headers={"Authorization": "Bearer " + self.jwts[i["ID"]]},
+            )
+            data = json.loads(response.content)
+            self.assertEqual(type(data), type([]))
+            self.assertNotEqual(len(data), 0)
+
+    def testNothingExist(self):
+        for i in self.NothingExistParam:
+            response = requests.get(
+                self.host + "{}".format("0"),
+                headers={"Authorization": "Bearer " + self.jwts[i["ID"]]},
+            )
+            data = json.loads(response.content)
+            self.assertEqual(data, "This User doesn't add KeyWord")
+
+    def testErrorDays(self):
+        for i in self.KeyWordExistParam:
+            response = requests.get(
+                self.host + "{}".format("a"),
+                headers={"Authorization": "Bearer " + self.jwts[i["ID"]]},
+            )
+            data = json.loads(response.content)
+            self.assertEqual(data, "Please enter a 'Only Number' for days")
 
 
 if __name__ == "__main__":
