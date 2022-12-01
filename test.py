@@ -122,9 +122,7 @@ class UserGetTest(unittest.TestCase):
         for i in self.IdExistParam:
             response = requests.get(
                 self.host + "/{}".format(i["ID"]),
-                headers={
-                    "Authorization": "Bearer " + self.jwt_l[i["ID"]]
-                },
+                headers={"Authorization": "Bearer " + self.jwt_l[i["ID"]]},
             )
             data = json.loads(response.content)
             self.assertEqual(data["Age"], int(i["Age"]))
@@ -133,10 +131,32 @@ class UserGetTest(unittest.TestCase):
 
     def testGetUserNotExist(self):
         for i in self.IdNotExistParam:
-            response = requests.get(self.host+'/{}'.format(i['ID']), headers={"Authorization": "Bearer " + self.jwt_l['test1']}) # 타인의 jwt로 정보 획득 시도
+            response = requests.get(
+                self.host + "/{}".format(i["ID"]),
+                headers={"Authorization": "Bearer " + self.jwt_l["test1"]},
+            )  # 타인의 jwt로 정보 획득 시도
             data = json.loads(response.content)
             self.assertEqual(data, "This User doesn't exist")
 
+
+class KeyWordTest(unittest.TestCase):
+    def setUp():
+        self.host = "http://127.0.0.1:5001/KeyWords"
+        self.KeyWordEmptyParam = []
+
+
+# class RecommendTest(unittest.TestCase):
+#     def setUp():
+#         self.host = '127.0.0.1:5001/Recommended/'
+#         self.BookMarkExistParam = [
+#             {"ID": "ch011015", "PassWd": "011015"},
+#         ]
+#         self.KeyWordExistParam = [
+
+#         ]
+#         self.NothingExistParam = [
+
+#         ]
 
 
 if __name__ == "__main__":

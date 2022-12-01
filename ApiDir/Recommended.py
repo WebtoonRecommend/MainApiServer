@@ -42,30 +42,8 @@ class RecommendedGet(Resource):
             result = recommend_func.FirstRecommendations(keywords)
             return result
 
-            # 별점 높은 순위
-            # result = []
-
-            # for i in range(len(keywords)):
-            #     temp = (
-            #         db.session.query(models.webtoonInfoJoin)
-            #         .filter(models.webtoonInfoJoin.장르.like("%{}%".format(keywords[i])))
-            #         .all()
-            #     )
-            #     temp = [[row.별점, row.이름] for row in temp]
-            #     result.extend(temp)
-
-            # result = sorted(result, reverse=True)  # 별점 순서로 정렬
-
-            # # 중복값 제거
-            # for i in range(len(result)):
-            #     if i == len(result) - 1:
-            #         break
-            #     elif result[i][1] == result[i + 1][1]:
-            #         result.pop(i)
-            # return result[:10]
-
         else:
             # 즐겨찾기 기반 추천
             result = recommend_func.Recommendations10(bookmarks, int(days))
-            
+
             return result
