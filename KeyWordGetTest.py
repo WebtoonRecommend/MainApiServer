@@ -2,6 +2,8 @@ import unittest
 import requests
 import json
 
+import test_func
+
 
 class KeyWordGetTest(unittest.TestCase):
     def setUp(self):

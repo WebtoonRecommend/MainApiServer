@@ -55,49 +55,41 @@ class BookMarkAdd(Resource):
         except:
             return 1  # 오류 발생시 코드
 
-
-@BookMark.route("/<UID>")
-class BookMarkList(Resource):
     @jwt_required()  # jwt 검증
     @BookMark.expect(parser)
-    def get(self, UID):
+    def get(self):
         """
         User가 즐겨찾기에 등록한 모든 웹툰들을 쿼리하여 가져오는 api\n\
         해당 User의 ID와 동일한 UID를 가진 모든 북마크들을 리스트 형태로 받아온다.\n
         만약 jwt의 주인의 id와 가져올 데이터의 id가 다른 경우 1을 반환한다."""
 
-        temp_id = get_jwt_identity()
-        if temp_id == UID:
-            data = db.session.query(models.BookMark).filter(models.BookMark.UID == UID)
-            data = pd.read_sql(data.statement, data.session.bind)
-            return json.loads(data.to_json(orient="records"))
-        else:
-            return 1  # 요청한 id와 가져올 데이터의 id가 다른 경우
+        UID = get_jwt_identity()
+        data = db.session.query(models.BookMark).filter(models.BookMark.UID == UID)
+        data = pd.read_sql(data.statement, data.session.bind)
+        return json.loads(data.to_json(orient="records"))
 
 
-@BookMark.route("/<UID>/<WebToonTitle>")
+@BookMark.route("/<WebToonTitle>")
 class BookMarkDelete(Resource):
     @jwt_required()  # jwt 검증
     @BookMark.expect(parser)
-    def delete(self, UID, WebToonTitle):
+    def delete(self, WebToonTitle):
         """
         User가 즐겨찾기에 등록한 웹툰 삭제\n\
         BookMark DB의 값 중에서 UID와 WebToonTitle이 동일한 항목 삭제
         """
 
         # jwt로 부터 id 추출
-        temp_id = get_jwt_identity()
+        UID = get_jwt_identity()
 
         # 데이터를 요청한 jwt와 반환할 데이터의 uid가 일치하는지 확인 및 데이터 반환
-        if temp_id == UID:
-            try:
-                db.session.query(models.BookMark).filter(
-                    models.BookMark.UID == UID,
-                    models.BookMark.WebtoonTitle == WebToonTitle,
-                ).delete()
-                db.session.commit()
-                return 0  # 쿼리 성공 시
-            except:
-                return 1  # 쿼리 실패 시
-        else:
-            return "jwt와 가져올 데이터의 id가 일치하지 않습니다."
+
+        try:
+            db.session.query(models.BookMark).filter(
+                models.BookMark.UID == UID,
+                models.BookMark.WebtoonTitle == WebToonTitle,
+            ).delete()
+            db.session.commit()
+            return 0  # 쿼리 성공 시
+        except:
+            return 1  # 쿼리 실패 시
