@@ -42,16 +42,18 @@ class RecommendedGet(Resource):
             # 단어 기반 추천
             try:
                 result = recommend_func.FirstRecommendations(keywords, int(days))
-
                 # 평점 순서대로 정렬
                 for i in result:
-                    i[0] = float(
-                        db.session.query(models.webtoonInfoJoin)
-                        .filter(models.webtoonInfoJoin.이름 == i[1])
-                        .first()
-                        .별점
-                    )
-                print(result)
+                    try:
+                        i[0] = float(
+                            db.session.query(models.webtoonInfoJoin)
+                            .filter(models.webtoonInfoJoin.이름 == i[1])
+                            .first()
+                            .별점
+                        )
+                    except AttributeError:
+                        continue
+
                 result = sorted(result, reverse=True)
             except ValueError:
                 return "Please enter a 'Only Number' for days"
