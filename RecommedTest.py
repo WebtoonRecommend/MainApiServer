@@ -19,6 +19,7 @@ class RecommendTest(unittest.TestCase):
             {"ID": "test2", "PassWd": "test2"},
             {"ID": "test3", "PassWd": "test3"},
         ]
+        self.WrongWordParam = [{"ID": "5555", "PassWd": "1111111"}]
 
         self.jwts = {}
 
@@ -45,6 +46,7 @@ class RecommendTest(unittest.TestCase):
                 headers={"Authorization": "Bearer " + self.jwts[i["ID"]]},
             )
             data = json.loads(response.content)
+            print(data)
             self.assertEqual(type(data), type([]))
             self.assertNotEqual(len(data), 0)
 
