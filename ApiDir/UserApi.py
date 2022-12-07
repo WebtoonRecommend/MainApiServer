@@ -102,7 +102,7 @@ class UserEdit(Resource):
 
         if PW == True:
             access_token = create_access_token(
-                identity=UID, expires_delta=datetime.timedelta(minutes=1)
+                identity=UID, expires_delta=datetime.timedelta(minutes=15)
             )  # jwt 암호화 및 전송
             return access_token
         else:

@@ -77,6 +77,7 @@ def Recommendations10(titles, days):  # https://wikidocs.net/102705 참고
         for j in titles:
             if recommend[i][1] == j:
                 recommend.pop(i)
+                break
 
     return recommend
 
@@ -111,10 +112,10 @@ def FirstRecommendations(
     return recommend
 
 
-print(FirstRecommendations(["스토리"], 0))
+# print(FirstRecommendations(["연애", "대학", "사랑"], 0))
 # print(FirstRecommendations(["연애", "대학", "사랑"], 2))
 
-# print(Recommendations10(["나노리스트", "이두나!"], 1))
+print(Recommendations10(["나노리스트", "이두나!"], 10))
 # print(Recommendations10(["나노리스트", "이두나!"], 2))
 
 # print(model.most_similar('대학원'))
