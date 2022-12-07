@@ -29,6 +29,7 @@ api = Api(
 
 # auth
 app.config["JWT_SECRET_KEY"] = config.JWT_SECRET_KEY
+app.config["PROPAGATE_EXCEPTIONS"] = True
 jwt = JWTManager(app)
 
 # orm
