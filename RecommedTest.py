@@ -20,6 +20,10 @@ class RecommendTest(unittest.TestCase):
             {"ID": "test3", "PassWd": "test3"},
         ]
         self.WrongWordParam = [{"ID": "5555", "PassWd": "1111111"}]
+        self.TooBigDayParam = [
+            {"ID": "ch011015", "PassWd": "011015", "Days": "12345"},
+            {"ID": "test", "PassWd": "test", "Days": "1234"},
+        ]
 
         self.jwts = {}
 
@@ -46,7 +50,6 @@ class RecommendTest(unittest.TestCase):
                 headers={"Authorization": "Bearer " + self.jwts[i["ID"]]},
             )
             data = json.loads(response.content)
-            print(data)
             self.assertEqual(type(data), type([]))
             self.assertNotEqual(len(data), 0)
 
@@ -67,6 +70,15 @@ class RecommendTest(unittest.TestCase):
             )
             data = json.loads(response.content)
             self.assertEqual(data, "Please enter a 'Only Number' for days")
+
+    def testTooBigParam(self):
+        for i in self.TooBigDayParam:
+            response = requests.get(
+                self.host + "{}".format(i["Days"]),
+                headers={"Authorization": "Bearer " + self.jwts[i["ID"]]},
+            )
+            data = json.loads(response.content)
+            self.assertEqual(len(data), 10)
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 from gensim.models import KeyedVectors
 import pickle
 import pandas as pd
+import random
 
 
 model = KeyedVectors.load_word2vec_format("descrip_w2v")  # 저장한 Word2Vec 모델 가져오기
@@ -49,6 +50,9 @@ WebToon = Title[["Title"]]
 
 
 def Recommendations10(titles, days):  # https://wikidocs.net/102705 참고
+    if days > 100:  # days가 너무 커서 추천 목록을 넘어가는 경우를 보정
+        days = random.randint(0, 100)
+
     indices = list(WebToon.index)
     doc2vec = 0
     for i in titles:
@@ -85,7 +89,8 @@ def Recommendations10(titles, days):  # https://wikidocs.net/102705 참고
 def FirstRecommendations(
     words, days
 ):  # https://wikidocs.net/102705 참고, 처음 입력 받은 단어를 기반으로 추천, 처음 받은 단어의 word2vec값을 평균내어 입력
-
+    if days > 19:  # days가 너무 커서 추천 목록을 넘어가는 경우를 보정
+        days = random.randint(0, 20)
     doc2vec = 0  # word2vec의 평균을 저장할 변수
 
     for i in words:  # 추천받은 단어의 word2vec들을 모두 합하여 평균을 냄
@@ -113,9 +118,9 @@ def FirstRecommendations(
 
 
 # print(FirstRecommendations(["연애", "대학", "사랑"], 0))
-# print(FirstRecommendations(["연애", "대학", "사랑"], 2))
+# print(FirstRecommendations(["연애", "대학", "사랑"], 10000))
 
-print(Recommendations10(["나노리스트", "이두나!"], 10))
+# print(Recommendations10(["나노리스트", "이두나!"], 10000))
 # print(Recommendations10(["나노리스트", "이두나!"], 2))
 
 # print(model.most_similar('대학원'))
