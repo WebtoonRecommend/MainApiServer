@@ -75,7 +75,6 @@ class RecommendedGet(Resource):
                         .first()
                         .별점
                     )
-                print(result)
                 result = sorted(result, reverse=True)
             except ValueError:
                 return "Please enter a 'Only Number' for days"
