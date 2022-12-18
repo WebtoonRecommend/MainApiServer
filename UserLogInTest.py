@@ -11,7 +11,7 @@ import config
 # UserApi 테스트 코드
 class UserLogInTest(unittest.TestCase):
     def setUp(self):
-        self.host = "http://13.125.222.145/User"
+        self.host = "http://127.0.0.1:5001/User"
         self.RightParam = [
             {"ID": "ch011015", "PassWd": "011015"},
             {"ID": "test", "PassWd": "test"},
